@@ -56,8 +56,8 @@ const radarData = {
 </script>
 
 <template>
-    <UPageCard title="Dashboard" description="Key metrics and chart samples for easy reference."
-        variant="naked" orientation="horizontal" class="rounded-none" />
+    <UPageCard title="Dashboard" description="Key metrics and chart samples for easy reference." variant="naked"
+        orientation="horizontal" class="rounded-none" />
 
     <!-- ── Stat Cards ────────────────────────────────────────────────── -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
@@ -119,7 +119,8 @@ const radarData = {
                 <UBadge variant="soft" color="primary">6 Months</UBadge>
             </div>
             <div class="h-[240px] w-full">
-                <Line :data="revenueData" :options="{ ...defaultOptions, plugins: { ...defaultOptions.plugins, legend: { display: true, labels: legendLabels } } }" />
+                <Line :data="revenueData"
+                    :options="{ ...defaultOptions, plugins: { ...defaultOptions.plugins, legend: { display: true, labels: legendLabels } } }" />
             </div>
         </UCard>
     </div>
@@ -147,7 +148,8 @@ const radarData = {
                 <UBadge variant="soft" color="primary">YoY</UBadge>
             </div>
             <div class="h-[240px] w-full">
-                <Bar :data="groupedBarData" :options="{ ...defaultOptions, plugins: { ...defaultOptions.plugins, legend: { display: true, labels: legendLabels } } }" />
+                <Bar :data="groupedBarData"
+                    :options="{ ...defaultOptions, plugins: { ...defaultOptions.plugins, legend: { display: true, labels: legendLabels } } }" />
             </div>
         </UCard>
     </div>
@@ -193,24 +195,93 @@ const radarData = {
     </div>
 
 
-    
-    <UAlert variant="subtle" color="warning" icon="i-lucide-bot" class="mt-6"
+
+    <UAlert variant="soft" icon="i-lucide-bot" color="secondary" class="mt-6"
         title="AI Agent Instructions — How to use charts in this project">
         <template #description>
-            <div class="mt-1 space-y-1 text-xs leading-relaxed">
-                <p>Charts use <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">useChart()</code> from <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">~/composables/useChart.ts</code>. Import the component from <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">vue-chartjs</code> and destructure helpers from the composable.</p>
+            <div class="mt-1 space-y-1 leading-relaxed">
+                <p>Charts use
+                    <UBadge as="code" label="useChart()" variant="soft" color="secondary"
+                        class="font-mono font-light" />
+                    from <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                        ~/composables/useChart.ts</UBadge>.
+                    Import the component from <UBadge as="code" variant="soft" color="secondary"
+                        class="font-mono font-light">
+                        vue-chartjs</UBadge> and
+                    destructure helpers from the composable.
+                </p>
                 <ul class="list-disc list-inside space-y-0.5 mt-1">
-                    <li><strong>Line chart</strong> — use <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">&lt;Line&gt;</code> with <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">lineDataset()</code> and <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">:options="defaultOptions"</code></li>
-                    <li><strong>Bar chart</strong> — use <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">&lt;Bar&gt;</code> with <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">barDataset()</code> and <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">:options="defaultOptions"</code></li>
-                    <li><strong>Doughnut chart</strong> — use <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">&lt;Doughnut&gt;</code> with <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">doughnutDataset()</code> and <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">:options="doughnutOptions"</code></li>
-                    <li><strong>Polar area chart</strong> — use <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">&lt;PolarArea&gt;</code> with <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">polarAreaDataset()</code> and <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">:options="polarAreaOptions"</code></li>
-                    <li><strong>Radar chart</strong> — use <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">&lt;Radar&gt;</code> with <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">radarDataset()</code> and <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">:options="radarOptions"</code></li>
-                    <li><strong>Multi-series legend</strong> — spread <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">defaultOptions</code> and override <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">plugins.legend</code> with <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">&#123; display: true, labels: legendLabels &#125;</code></li>
-                    <li><strong>Custom colors</strong> — use <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">palette.blue/violet/green/orange/pink/teal</code> (each has <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">.solid</code> and <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">.soft</code>)</li>
+                    <li><strong>Line chart</strong> — use <UBadge as="code" variant="soft" color="secondary"
+                            class="font-mono font-light">&lt;Line&gt;</UBadge> with
+                        <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            lineDataset()
+                        </UBadge> and
+                        <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            :options="defaultOptions"
+                        </UBadge>
+                    </li>
+                    <li><strong>Bar chart</strong> — use <UBadge as="code" variant="soft" color="secondary"
+                            class="font-mono font-light">&lt;Bar&gt;</UBadge> with
+                        <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            barDataset()
+                        </UBadge> and
+                        <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            :options="defaultOptions"
+                        </UBadge>
+                    </li>
+                    <li><strong>Doughnut chart</strong> — use <UBadge as="code" variant="soft" color="secondary"
+                            class="font-mono font-light">&lt;Doughnut&gt;</UBadge>
+                        with <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            doughnutDataset()</UBadge>
+                        and <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            :options="doughnutOptions"
+                        </UBadge>
+                    </li>
+                    <li><strong>Polar area chart</strong> — use <UBadge as="code" variant="soft" color="secondary"
+                            class="font-mono font-light">&lt;PolarArea&gt;</UBadge>
+                        with <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            polarAreaDataset()
+                        </UBadge>
+                        and <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            :options="polarAreaOptions"
+                        </UBadge>
+                    </li>
+                    <li><strong>Radar chart</strong> — use <UBadge as="code" variant="soft" color="secondary"
+                            class="font-mono font-light">&lt;Radar&gt;</UBadge> with
+                        <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            radarDataset()
+                        </UBadge>
+                        and <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            :options="radarOptions"
+                        </UBadge>
+                    </li>
+                    <li><strong>Multi-series legend</strong> — spread <UBadge as="code" variant="soft" color="secondary"
+                            class="font-mono font-light">defaultOptions</UBadge> and
+                        override <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            plugins.legend
+                        </UBadge> with
+                        <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            &#123; display:
+                            true, labels:
+                            legendLabels &#125;</UBadge>
+                    </li>
+                    <li><strong>Custom colors</strong> — use <UBadge as="code" variant="soft" color="secondary"
+                            class="font-mono font-light">
+                            palette.blue/violet/green/orange/pink/teal
+                        </UBadge>
+                        (each has <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">
+                            .solid
+                        </UBadge>
+                        and <UBadge as="code" variant="soft" color="secondary" class="font-mono font-light">.soft
+                        </UBadge>)
+                    </li>
                 </ul>
-                <p class="mt-1">All charts must be wrapped in a container with a fixed height, e.g. <code class="font-mono bg-warning-200 dark:bg-warning-700 px-1 rounded">class="h-[240px] w-full"</code>.</p>
+                <p class="mt-1">All charts must be wrapped in a container with a fixed height, e.g. <UBadge as="code"
+                        variant="soft" color="secondary" class="font-mono font-light">class="h-[240px]
+                        w-full"</UBadge>
+                    .
+                </p>
             </div>
         </template>
     </UAlert>
 </template>
-

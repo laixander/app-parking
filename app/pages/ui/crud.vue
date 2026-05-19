@@ -21,8 +21,8 @@ definePageMeta({
     title: 'CRUD Reference',
     isTable: true,
     headerActions: [
-        { label: 'History', icon: 'i-lucide-history', event: 'viewLogs' },
-        { label: 'Add User', icon: 'i-lucide-user-plus', event: 'addUser', color: 'primary', variant: 'solid' }
+        { label: 'History', icon: 'i-lucide-history', event: 'viewLogs', variant: 'soft' },
+        { label: 'Add User', icon: 'i-lucide-user-plus', event: 'addUser', color: 'primary' }
     ]
 })
 
@@ -103,7 +103,7 @@ function handleDeleteUser(user: User) {
         confirmColor: 'error',
         onConfirm: () => {
             deleteUser(user.id)
-            logger.addLog(`Deleted user: ${user.name}`, 'error')
+            logger.addLog(`Deleted user: ${user.name}`, `Deleted`, 'error')
         }
     })
 }

@@ -116,8 +116,10 @@ const headerActions = computed(() => {
         }">
             <template #header>
                 <div class="flex items-end gap-2.5">
-                    <UIcon name="i-fluent-emoji-flat-toolbox" class="size-8 shrink-0" />
-                    <span v-if="!isCollapsed" class="font-black text-neutral-900 dark:text-white tracking-tight">Desk<span class="text-primary">Hub</span></span>
+                    <UIcon name="i-ph-car-duotone" class="size-8 shrink-0 text-primary" />
+                    <span v-if="!isCollapsed"
+                        class="font-black text-neutral-900 dark:text-white tracking-tight">Park<span
+                            class="text-primary">Spot</span></span>
                 </div>
             </template>
 
@@ -146,7 +148,7 @@ const headerActions = computed(() => {
                 <div class="ml-auto flex items-center gap-2">
                     <UButton v-for="(action, index) in headerActions" :key="index" :label="action.label"
                         :icon="action.icon" :color="(action.color as any) || 'neutral'"
-                        :variant="(action.variant as any) || 'soft'" :size="(action.size as any) || 'sm'"
+                        :variant="(action.variant as any) || 'solid'" :size="(action.size as any) || 'sm'"
                         @click="action.event ? events.emit(action.event) : null" />
                 </div>
             </div>
