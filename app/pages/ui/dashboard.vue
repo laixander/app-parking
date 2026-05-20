@@ -1,6 +1,19 @@
 <script setup lang="ts">
+// ============================================================================
+// Page Configuration
+// ============================================================================
+definePageMeta({
+    title: 'Dashboard'
+})
+
+// ============================================================================
+// Imports
+// ============================================================================
 import { Line, Bar, Doughnut, Radar, PolarArea } from 'vue-chartjs'
 
+// ============================================================================
+// Composables
+// ============================================================================
 const { palette, legendLabels, defaultOptions, doughnutOptions, polarAreaOptions, radarOptions, lineDataset, barDataset, doughnutDataset, polarAreaDataset, radarDataset } = useChart()
 
 // ── Line: Single series ───────────────────────────────────────────────────
@@ -61,44 +74,14 @@ const radarData = {
 
     <!-- ── Stat Cards ────────────────────────────────────────────────── -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        <UCard :ui="{ body: 'px-4 py-5 sm:p-6' }">
-            <div class="flex items-center justify-between">
-                <div class="text-sm font-medium">Total Users</div>
-                <UIcon name="i-lucide-users" class="text-primary w-5 h-5 opacity-50" />
-            </div>
-            <div class="text-3xl font-bold mt-2">10,248</div>
-            <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
-                <UIcon name="i-lucide-arrow-up-right" class="w-3 h-3" />
-                <span>12% from last month</span>
-            </div>
-        </UCard>
-        <UCard :ui="{ body: 'px-4 py-5 sm:p-6' }">
-            <div class="flex items-center justify-between">
-                <div class="text-sm font-medium">Active Sessions</div>
-                <UIcon name="i-lucide-activity" class="text-primary w-5 h-5 opacity-50" />
-            </div>
-            <div class="text-3xl font-bold mt-2">1,432</div>
-            <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
-                <UIcon name="i-lucide-arrow-up-right" class="w-3 h-3" />
-                <span>5% from last week</span>
-            </div>
-        </UCard>
-        <UCard :ui="{ body: 'px-4 py-5 sm:p-6' }">
-            <div class="flex items-center justify-between">
-                <div class="text-sm font-medium">Avg. Response Time</div>
-                <UIcon name="i-lucide-zap" class="text-primary w-5 h-5 opacity-50" />
-            </div>
-            <div class="text-3xl font-bold mt-2">245ms</div>
-            <div class="text-xs text-error-500 font-medium mt-2 flex items-center gap-1">
-                <UIcon name="i-lucide-arrow-down-right" class="w-3 h-3" />
-                <span>12ms from last month</span>
-            </div>
-        </UCard>
+        <StatCard title="Total Users" value="10,248" icon="i-lucide-users" trend="12% from last month" trendDirection="up" />
+        <StatCard title="Active Sessions" value="1,432" icon="i-lucide-activity" trend="5% from last week" trendDirection="up" />
+        <StatCard title="Avg. Response Time" value="245ms" icon="i-lucide-zap" trend="12ms from last month" trendDirection="down" />
     </div>
 
     <!-- ── Row 1: Line Charts ─────────────────────────────────────────── -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <UCard>
+        <UCard variant="subtle" class="shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h3 class="text-base font-semibold">Active Users Trend</h3>
@@ -110,7 +93,7 @@ const radarData = {
                 <Line :data="activityData" :options="defaultOptions" />
             </div>
         </UCard>
-        <UCard>
+        <UCard variant="subtle" class="shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h3 class="text-base font-semibold">Revenue vs Expenses</h3>
@@ -127,7 +110,7 @@ const radarData = {
 
     <!-- ── Row 2: Bar Charts ──────────────────────────────────────────── -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <UCard>
+        <UCard variant="subtle" class="shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h3 class="text-base font-semibold">Activity by Category</h3>
@@ -139,7 +122,7 @@ const radarData = {
                 <Bar :data="completionData" :options="defaultOptions" />
             </div>
         </UCard>
-        <UCard>
+        <UCard variant="subtle" class="shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h3 class="text-base font-semibold">Quarterly Performance</h3>
@@ -156,7 +139,7 @@ const radarData = {
 
     <!-- ── Row 3: Doughnut + Polar Area + Radar ──────────────────────── -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <UCard>
+        <UCard variant="subtle" class="shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h3 class="text-base font-semibold">Traffic Sources</h3>
@@ -168,7 +151,7 @@ const radarData = {
                 <Doughnut :data="trafficData" :options="doughnutOptions" />
             </div>
         </UCard>
-        <UCard>
+        <UCard variant="subtle" class="shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h3 class="text-base font-semibold">Resource Allocation</h3>
@@ -180,7 +163,7 @@ const radarData = {
                 <PolarArea :data="polarData" :options="polarAreaOptions" />
             </div>
         </UCard>
-        <UCard>
+        <UCard variant="subtle" class="shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h3 class="text-base font-semibold">System Health</h3>

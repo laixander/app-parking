@@ -31,11 +31,6 @@ const events = useEvents()
 // Sidebar navigation items mapping
 const items = computed<NavigationMenuItem[]>(() => [
     {
-        label: 'Coming Soon',
-        icon: 'i-lucide-construction',
-        badge: 'Soon'
-    },
-    {
         label: 'Agent Kit',
         icon: 'i-lucide-blocks',
         defaultOpen: true,
@@ -59,6 +54,12 @@ const items = computed<NavigationMenuItem[]>(() => [
                 label: 'Dashboard',
                 icon: 'i-lucide-chart-line',
                 to: '/ui/dashboard'
+            },
+            {
+                label: 'Coming Soon',
+                icon: 'i-lucide-construction',
+                badge: 'Soon',
+                to: '/ui/coming-soon'
             },
             {
                 label: 'Card Variants',
@@ -155,7 +156,7 @@ const headerActions = computed(() => {
 
             <div :class="[
                 'flex-1',
-                route.meta.isTable ? 'flex flex-col overflow-hidden min-h-0' : 'p-4 overflow-y-auto scrollbar'
+                route.meta.isTable ? 'flex flex-col overflow-hidden min-h-0' : 'p-4 sm:p-6 overflow-y-auto scrollbar'
             ]">
                 <slot />
             </div>

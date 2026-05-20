@@ -5,5 +5,5 @@ definePageMeta({
 </script>
 
 <template>
-    <UPageCard title="Welcome to DeskHub" description="Select an item from the sidebar to get started." variant="naked" orientation="horizontal" class="border-b border-default rounded-none p-4" />
+    <Heading title="Dashboard" description="Select an item from the sidebar to get started." icon="i-lucide-chart-line" />
 </template>
