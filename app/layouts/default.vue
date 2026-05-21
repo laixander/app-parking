@@ -34,6 +34,7 @@ const items = computed<NavigationMenuItem[]>(() => [
         label: 'Agent Kit',
         icon: 'i-lucide-blocks',
         defaultOpen: true,
+        type: 'trigger',
         children: [
             {
                 label: 'AI Rules',
@@ -127,9 +128,16 @@ const headerActions = computed(() => {
             <UNavigationMenu :items="items" orientation="vertical" :collapsed="isCollapsed" :tooltip="{
                 delayDuration: 200,
                 content: { side: 'right', sideOffset: 12 },
-                arrow: true
+                arrow: true,
             }"
-                :ui="{ root: 'gap-2.5', label: 'text-default uppercase tracking-widest py-2.5', link: 'p-2.5', list: 'space-y-0.5' }" />
+            popover
+                :ui="{
+                    root: 'gap-2.5',
+                    label: 'text-default uppercase tracking-widest py-2.5',
+                    link: isCollapsed ? 'flex-col gap-1' : 'p-2.5',
+                    linkLabel: isCollapsed ? 'block text-[10px]/3 text-center' : undefined,
+                    list: 'space-y-0.5'
+                }" />
             <template #footer>
                 <UserMenu :collapsed="isCollapsed" />
             </template>
