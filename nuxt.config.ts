@@ -32,6 +32,8 @@ export default defineNuxtConfig({
         '@vue/devtools-core',
         '@vue/devtools-kit',
         '@vueuse/core',
+        'chart.js',
+        'vue-chartjs',
         'zod',
       ]
     }

@@ -3,7 +3,7 @@
 // Page Configuration
 // ============================================================================
 definePageMeta({
-    title: 'Input Events'
+    title: 'Agent Kit'
 })
 
 
@@ -121,7 +121,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 }
 </script>
 <template>
-    <div class="flex flex-col gap-12 p-6 max-w-5xl mx-auto">
+    <UContainer class="max-w-4xl flex flex-col gap-8 md:gap-12">
         <UPageCard title="Input Events"
             description="The Form component automatically triggers validation when an input emits an input, change, or blur event."
             variant="naked" orientation="horizontal" class="rounded-none">
@@ -233,5 +233,5 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 </UButton>
             </div>
         </UForm>
-    </div>
+    </UContainer>
 </template>

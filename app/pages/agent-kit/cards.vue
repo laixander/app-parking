@@ -5,7 +5,7 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 // Page Configuration
 // ============================================================================
 definePageMeta({
-    title: 'Card Variants',
+    title: 'Agent Kit',
     isTable: true
 })
 

@@ -3,7 +3,7 @@
 // Page Configuration
 // ============================================================================
 definePageMeta({
-    title: 'AI System Rules',
+    title: 'Agent Kit',
     isTable: false
 })
 
@@ -157,7 +157,7 @@ const utilityPatterns = [
 </script>
 
 <template>
-    <div class="flex flex-col gap-6 p-6 max-w-5xl mx-auto">
+    <UContainer class="max-w-4xl flex flex-col gap-8 md:gap-12">
         <UPageCard title="AI System Rules"
             description="This project contains reusable UI components, layouts, modules, and functional patterns that must be reused whenever possible. The AI agent should treat this codebase as a structured system—not a blank canvas."
             variant="naked" class="mb-4">
@@ -431,17 +431,14 @@ const utilityPatterns = [
                     <span class="text-xs font-medium">{{ rule.title }}</span>
                 </div>
             </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                <!-- Prohibited Behavior -->
+                <UAlert icon="i-lucide-shield-alert" color="error" variant="soft" title="Prohibited AI Behavior"
+                    description="Do NOT redesign working systems, duplicate components, ignore architecture, introduce random dependencies, or create inconsistent UI patterns." />
+                <!-- Final Decision -->
+                <UAlert icon="i-lucide-info" color="primary" variant="subtle" title="Final Decision Framework"
+                    description="Before generating anything, ask: Does this already exist? Can this be reused? Can this be extended? Is a new component truly necessary? If reusable components exist: USE THEM FIRST." />
+            </div>
         </section>
-
-        <!-- Prohibited Behavior -->
-        <section>
-            <UAlert icon="i-lucide-shield-alert" color="error" variant="soft" title="Prohibited AI Behavior"
-                description="Do NOT redesign working systems, duplicate components, ignore architecture, introduce random dependencies, or create inconsistent UI patterns." />
-        </section>
-
-        <!-- Final Decision -->
-        <UAlert icon="i-lucide-info" color="primary" variant="subtle" title="Final Decision Framework"
-            description="Before generating anything, ask: Does this already exist? Can this be reused? Can this be extended? Is a new component truly necessary? If reusable components exist: USE THEM FIRST."
-            class="mb-8" />
-    </div>
+    </UContainer>
 </template>

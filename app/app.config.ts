@@ -6,8 +6,7 @@ export default defineAppConfig({
         },
         pageCard: {
             slots: {
-                title: 'text-3xl font-extrabold tracking-tight',
-                description: 'text-md'
+                title: 'text-2xl font-bold tracking-tight'
             }
         }
     }

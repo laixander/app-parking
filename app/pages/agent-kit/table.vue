@@ -3,9 +3,9 @@
 // Imports
 // ============================================================================
 import { h, ref, useTemplateRef } from 'vue'
-import type { TableColumn } from '@nuxt/ui'
+import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 import { useOverlay } from '#imports'
-import { UButton, UBadge } from '#components'
+import { UButton, UBadge, UDropdownMenu } from '#components'
 
 // Types
 import type { User } from '~/types'
@@ -18,7 +18,7 @@ import ConfirmationModal from '~/components/ConfirmationModal.vue'
 // Page Configuration
 // ============================================================================
 definePageMeta({
-    title: 'CRUD Reference',
+    title: 'Agent Kit',
     isTable: true,
     headerActions: [
         { label: 'History', icon: 'i-lucide-history', event: 'viewLogs', variant: 'soft' },
@@ -144,7 +144,7 @@ const columns: TableColumn<User>[] = [
     {
         accessorKey: 'name',
         header: getSortableHeader('Name'),
-        cell: ({ row }) => `${row.getValue('name')}`
+        cell: ({ row }) => `${row.getValue('name')}`,
     },
     {
         accessorKey: 'email',
@@ -187,29 +187,41 @@ const columns: TableColumn<User>[] = [
             }
         },
         cell: ({ row }) => {
-            return h('div', { class: 'inline-flex gap-2' }, [
-                h(UButton, {
-                    icon: row.original.status === 'Active' ? 'i-lucide-user-minus' : 'i-lucide-user-check',
-                    color: row.original.status === 'Active' ? 'warning' : 'success',
+            const items: DropdownMenuItem[][] = [
+                [
+                    {
+                        label: row.original.status === 'Active' ? 'Deactivate' : 'Activate',
+                        icon: row.original.status === 'Active' ? 'i-lucide-user-minus' : 'i-lucide-user-check',
+                        onSelect: () => handleToggleStatus(row.original)
+                    },
+                    {
+                        label: 'Edit',
+                        icon: 'i-lucide-edit',
+                        onSelect: () => handleEditUser(row.original)
+                    }
+                ],
+                [
+                    {
+                        label: 'Delete',
+                        icon: 'i-lucide-trash',
+                        color: 'error',
+                        onSelect: () => handleDeleteUser(row.original)
+                    }
+                ]
+            ]
+
+            return h(UDropdownMenu, {
+                items,
+                content: { align: 'end' },
+                size: 'sm'
+            }, {
+                default: () => h(UButton, {
+                    icon: 'i-lucide-ellipsis-vertical',
+                    color: 'neutral',
                     variant: 'ghost',
-                    size: 'sm',
-                    onClick: () => handleToggleStatus(row.original)
-                }),
-                h(UButton, {
-                    icon: 'i-lucide-edit',
-                    color: 'primary',
-                    variant: 'ghost',
-                    size: 'sm',
-                    onClick: () => handleEditUser(row.original)
-                }),
-                h(UButton, {
-                    icon: 'i-lucide-trash',
-                    color: 'error',
-                    variant: 'ghost',
-                    size: 'sm',
-                    onClick: () => handleDeleteUser(row.original)
+                    size: 'sm'
                 })
-            ])
+            })
         }
     }
 ]
@@ -221,9 +233,9 @@ const columnVisibility = ref({
 </script>
 
 <template>
-    <UPageCard title="CRUD Reference"
+    <UPageCard title="Table & CRUD"
         description="A standard reference implementation for AI agents to understand CRUD patterns, data tables, and modal-based workflows within this application."
-        variant="naked" orientation="horizontal" class="border-b border-default rounded-none p-4">
+        variant="naked" orientation="horizontal" class="border-b border-default rounded-none p-4 sm:p-6">
         <div class="flex justify-end gap-2 flex-1">
             <TableGlobalFilter v-model="globalFilter" />
             <TableColumnToggle :table="table" />
@@ -231,7 +243,7 @@ const columnVisibility = ref({
     </UPageCard>
 
     <UTable sticky ref="table" :data="users" :columns="columns" :loading="pending"
-        v-model:column-visibility="columnVisibility" v-model:global-filter="globalFilter" class="flex-1 scrollbar">
+        v-model:column-visibility="columnVisibility" v-model:global-filter="globalFilter" :ui="{ th: 'sm:px-6', td: 'sm:px-6' }" class="flex-1 scrollbar">
         <template #empty>
             <Empty :loading="pending" title="No users found"
                 description="Your user database is currently empty. Click the 'Deploy Demo Data' FAB button or add one manually."

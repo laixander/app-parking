@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-    title: 'Coming Soon'
+    title: 'Agent Kit'
 })
 
 const toast = useToast()
@@ -50,7 +50,7 @@ function handleRequestDemo() {
         <ComingSoon
             icon="i-lucide-construction"
             coming-soon-title="Feature Coming Soon"
-            coming-soon-description="This performance management module is currently under development. We're working hard to bring you powerful HR management features."
+            coming-soon-description="This module is currently under development. We're working hard to bring you powerful management features."
             button-text="Request Demo"
             :features="featureSections"
             @request-demo="handleRequestDemo"

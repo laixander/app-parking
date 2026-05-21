@@ -38,34 +38,34 @@ const items = computed<NavigationMenuItem[]>(() => [
             {
                 label: 'AI Rules',
                 icon: 'i-lucide-scroll-text',
-                to: '/ui/ai-rules'
-            },
-            {
-                label: 'CRUD',
-                icon: 'i-lucide-layers',
-                to: '/ui/crud'
-            },
-            {
-                label: 'Input Events',
-                icon: 'i-lucide-file-edit',
-                to: '/ui/inputs'
+                to: '/agent-kit/ai-rules'
             },
             {
                 label: 'Dashboard',
                 icon: 'i-lucide-chart-line',
-                to: '/ui/dashboard'
+                to: '/agent-kit/dashboard'
+            },
+            {
+                label: 'Table & CRUD',
+                icon: 'i-lucide-layers',
+                to: '/agent-kit/table'
+            },
+            {
+                label: 'Input Events',
+                icon: 'i-lucide-file-edit',
+                to: '/agent-kit/inputs'
             },
             {
                 label: 'Coming Soon',
                 icon: 'i-lucide-construction',
                 badge: 'Soon',
-                to: '/ui/coming-soon'
+                to: '/agent-kit/coming-soon'
             },
             {
                 label: 'Card Variants',
                 icon: 'i-lucide-app-window',
-                to: '/ui/cards/card-system',
-                active: route.path.startsWith('/ui/cards')
+                to: '/agent-kit/cards/card-system',
+                active: route.path.startsWith('/agent-kit/cards')
             }
         ]
     }

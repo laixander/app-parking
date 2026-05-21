@@ -2,6 +2,9 @@
 // ============================================================================
 // Imports
 // ============================================================================
+import { reactive, watch, useTemplateRef } from 'vue'
+import * as z from 'zod'
+import type { FormSubmitEvent } from '@nuxt/ui'
 import type { User } from '~/types'
 
 // ============================================================================
@@ -26,12 +29,22 @@ const emit = defineEmits<{
 // ============================================================================
 const isOpen = defineModel<boolean>('open', { default: false })
 const roles = ['Admin', 'Editor', 'Viewer']
+const formRef = useTemplateRef('form')
+
+const schema = z.object({
+    name: z.string({ message: 'Name is required' }).min(1, 'Name is required'),
+    email: z.string({ message: 'Email is required' }).email('Must be a valid email address'),
+    role: z.string({ message: 'Role is required' }),
+    status: z.enum(['Active', 'Inactive'], { message: 'Status must be Active or Inactive' })
+})
+
+type Schema = z.output<typeof schema>
 
 const form = reactive({
     name: props.user?.name || '',
     email: props.user?.email || '',
     role: props.user?.role || 'Viewer',
-    status: props.user?.status || 'Active'
+    status: props.user?.status || 'Active' as const
 })
 
 // Sync form with props when user changes
@@ -53,10 +66,8 @@ watch(() => props.user, (newVal) => {
 /**
  * Handle form submission
  */
-function onSubmit() {
-    if (!form.name.trim() || !form.email.trim()) return
-
-    emit('submit', { ...form })
+function onSubmit(event: FormSubmitEvent<Schema>) {
+    emit('submit', { ...event.data })
     resetForm()
     isOpen.value = false
 }
@@ -78,6 +89,7 @@ function resetForm() {
     form.email = ''
     form.role = 'Viewer'
     form.status = 'Active'
+    formRef.value?.clear()
 }
 </script>
 
@@ -92,20 +104,20 @@ function resetForm() {
                 </div>
 
                 <!-- Form Content -->
-                <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
-                    <UFormField label="Name" required>
+                <UForm ref="form" :state="form" :schema="schema" class="flex flex-col gap-4" @submit="onSubmit">
+                    <UFormField label="Name" name="name">
                         <UInput v-model="form.name" placeholder="John Doe" icon="i-lucide-user" class="w-full" />
                     </UFormField>
 
-                    <UFormField label="Email" required>
+                    <UFormField label="Email" name="email">
                         <UInput v-model="form.email" type="email" placeholder="john@example.com" icon="i-lucide-mail" class="w-full" />
                     </UFormField>
 
-                    <UFormField label="Role">
+                    <UFormField label="Role" name="role">
                         <USelect v-model="form.role" :items="roles" icon="i-lucide-shield" class="w-full" />
                     </UFormField>
 
-                    <UFormField label="Status">
+                    <UFormField label="Status" name="status">
                         <USelect v-model="form.status" :items="['Active', 'Inactive']" icon="i-lucide-activity" class="w-full" />
                     </UFormField>
 
@@ -113,10 +125,9 @@ function resetForm() {
                     <div class="flex justify-end gap-2 pt-2">
                         <UButton label="Cancel" color="neutral" variant="ghost" @click="onCancel" />
                         <UButton type="submit" :label="user ? 'Save Changes' : 'Add User'" color="primary" 
-                            :icon="user ? 'i-lucide-save' : 'i-lucide-user-plus'"
-                            :disabled="!form.name.trim() || !form.email.trim()" />
+                            :icon="user ? 'i-lucide-save' : 'i-lucide-user-plus'" />
                     </div>
-                </form>
+                </UForm>
             </div>
 
             <!-- Close Button -->
