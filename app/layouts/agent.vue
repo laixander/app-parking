@@ -30,21 +30,32 @@ const events = useEvents()
 
 // Sidebar navigation items mapping
 const items = computed<NavigationMenuItem[]>(() => [
+
     {
-        label: 'Dashboard',
-        icon: 'i-lucide-blocks',
-        to: '/',
+        label: 'AI Rules',
+        icon: 'i-lucide-scroll-text',
+        to: '/agent/ai-rules'
     },
     {
-        label: 'Modules',
-        icon: 'i-lucide-blocks',
-        type: 'trigger',
-        children: [
-            {
-                label: 'Module',
-                to: '/module'
-            }
-        ]
+        label: 'Dashboard',
+        icon: 'i-lucide-chart-line',
+        to: '/agent/dashboard'
+    },
+    {
+        label: 'Table & CRUD',
+        icon: 'i-lucide-layers',
+        to: '/agent/table'
+    },
+    {
+        label: 'Input Events',
+        icon: 'i-lucide-file-edit',
+        to: '/agent/inputs'
+    },
+    {
+        label: 'Coming Soon',
+        icon: 'i-lucide-construction',
+        badge: 'Soon',
+        to: '/agent/coming-soon'
     }
 ])
 
