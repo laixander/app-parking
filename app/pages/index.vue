@@ -1,42 +1,62 @@
 <script setup lang="ts">
-definePageMeta({
-    layout: false
+definePageMeta({ title: 'Dashboard' })
+
+import { useDashboardStore } from '~/stores/dashboardStore'
+import { UIcon, UCard, UBadge } from '#components'
+import { Line } from 'vue-chartjs'
+import { computed } from 'vue'
+
+const store = useDashboardStore()
+const { defaultOptions } = useChart()
+
+const formatter = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' })
+
+const chartData = computed(() => {
+    return {
+        labels: store.revenueChart.map(d => d.date),
+        datasets: [{
+            label: 'Daily Revenue',
+            data: store.revenueChart.map(d => d.amount),
+            borderColor: 'rgb(14, 165, 233)',
+            backgroundColor: 'rgba(14, 165, 233, 0.15)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgb(14, 165, 233)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            fill: true,
+            tension: 0.4,
+        }]
+    }
 })
-
-const { setRole } = useDemoAuth()
-const router = useRouter()
-
-const selectedRole = ref<SystemRole | undefined>(undefined)
-const roleOptions: SystemRole[] = ['Admin', 'Employee']
-
-const handleLogin = () => {
-    if (!selectedRole.value) return
-    setRole(selectedRole.value)
-    router.push('/dashboard')
-}
 </script>
+
 <template>
-    <div class="fixed inset-0 flex justify-center items-center bg-neutral-50 dark:bg-neutral-950">
-        <UCard>
-            <header class="space-y-2">
-                <div class="font-semibold text-xl text-highlighted text-center">Login</div>
-                <div class="text-sm text-muted text-center">Enter your credentials to access your account</div>
-            </header>
-            <main class="space-y-4 mt-10">
-                <UFormField label="Username">
-                    <UInput placeholder="Enter your username" variant="soft" size="lg" class="w-full" />
-                </UFormField>
-                <UFormField label="Password">
-                    <UInput placeholder="Enter your password" variant="soft" size="lg" type="password" class="w-full" />
-                </UFormField>
-                <UFormField label="User Role">
-                    <USelect v-model="selectedRole" placeholder="Select your role" :items="roleOptions" variant="soft" size="lg" class="w-full" />
-                </UFormField>
-                <UButton label="Login" size="lg" class="justify-center" block :disabled="!selectedRole" @click="handleLogin" />
-            </main>
-            <footer class="text-center mt-8">
-                <ULink as="button" class="text-sm">Forgot Password?</ULink>
-            </footer>
-        </UCard>
-    </div>
+    <PageHeading title="Dashboard" description="Real-time facility operations and revenue metrics." />
+    
+    <ClientOnly>
+        <!-- ── Stat Cards ────────────────────────────────────────────── -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+            <StatCard title="Total Revenue" :value="formatter.format(store.overview.totalRevenue)" icon="i-lucide-wallet" trend="Live from Billing" trend-direction="up" />
+            <StatCard title="Unpaid Invoices" :value="String(store.overview.unpaidInvoices)" icon="i-lucide-receipt" trend="Live from Billing" trend-direction="flat" />
+            <StatCard title="Active Sessions" :value="String(store.overview.activeSessions)" icon="i-lucide-car-front" trend="Live from Sessions" trend-direction="up" />
+            <StatCard title="Occupancy Rate" :value="`${store.overview.occupancyRate}%`" icon="i-lucide-pie-chart" trend="Live from Slots" trend-direction="flat" />
+        </div>
+
+        <div class="mt-6">
+            <!-- ── Revenue Chart ─────────────────────────────────────── -->
+            <UCard variant="subtle" class="shadow-sm flex flex-col" :ui="{ body: 'flex-1 flex flex-col' }">
+                <div class="flex justify-between items-center mb-6 shrink-0">
+                    <div>
+                        <h3 class="text-base font-semibold">Revenue Trend</h3>
+                        <p class="text-xs text-muted mt-0.5">Last 7 Days</p>
+                    </div>
+                </div>
+                <div class="flex-1 min-h-[300px] w-full">
+                    <Line v-if="store.revenueChart.length > 0" :data="chartData" :options="defaultOptions" />
+                    <div v-else class="h-full flex items-center justify-center text-muted py-12">No data available</div>
+                </div>
+            </UCard>
+        </div>
+    </ClientOnly>
 </template>

@@ -1,10 +1,39 @@
 <script setup lang="ts">
+import { useUserStore } from '~/stores/userStore'
+import { useDashboardStore } from '~/stores/dashboardStore'
+import { useNotificationStore } from '~/stores/notificationStore'
+import { useKanbanStore } from '~/stores/kanbanStore'
+import { useParkingSlotStore } from '~/stores/parkingSlotStore'
+import { useVehicleStore } from '~/stores/vehicleStore'
+import { useRfidCredentialStore } from '~/stores/rfidCredentialStore'
+import { useParkingAllocationStore } from '~/stores/parkingAllocationStore'
+import { useVisitorReservationStore } from '~/stores/visitorReservationStore'
+import { useParkingSessionStore } from '~/stores/parkingSessionStore'
+import { useBillingTransactionStore } from '~/stores/billingTransactionStore'
+
 // ============================================================================
 // Composables & State
 // ============================================================================
-const { seedAll, resetAll } = useDemoSeeder()
-const { isLoading } = useUsers()
+const store = useUserStore()
+const dashboardStore = useDashboardStore()
+const notificationStore = useNotificationStore()
+const kanbanStore = useKanbanStore()
+const parkingSlotStore = useParkingSlotStore()
+const vehicleStore = useVehicleStore()
+const rfidCredentialStore = useRfidCredentialStore()
+const parkingAllocationStore = useParkingAllocationStore()
+const visitorReservationStore = useVisitorReservationStore()
+const parkingSessionStore = useParkingSessionStore()
+const billingTransactionStore = useBillingTransactionStore()
 const toast = useAppToast()
+
+const isLoading = computed(() => store.isLoading || dashboardStore.isLoading || parkingSlotStore.isLoading || vehicleStore.isLoading || rfidCredentialStore.isLoading || parkingAllocationStore.isLoading || visitorReservationStore.isLoading || parkingSessionStore.isLoading || billingTransactionStore.isLoading)
+const isDataDeployed = computed(() => dashboardStore.hasDashboardData || parkingSessionStore.hasParkingSessions || billingTransactionStore.hasBillingTransactions)
+
+// ============================================================================
+// Confirmation Modal
+// ============================================================================
+const isResetConfirmOpen = ref(false)
 
 // ============================================================================
 // Methods
@@ -14,72 +43,126 @@ const toast = useAppToast()
  * Handle mass seeding of demo data
  */
 const handleSeed = async () => {
-    isLoading.value = true
     try {
-        // Add a small delay for dramatic effect/perceived realism
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        await seedAll()
-        toast.success('System Populated', 'Massive mock data deployed successfully across all modules.')
-    } catch (e) {
-        toast.error('Error', 'Failed to deploy demo data.')
-    } finally {
-        isLoading.value = false
+        store.deployMockData(9)
+        dashboardStore.deployMockData()
+        notificationStore.deployMockData()
+        kanbanStore.deployMockData()
+        parkingSlotStore.deployMockData()
+        vehicleStore.deployMockData()
+        rfidCredentialStore.deployMockData()
+        parkingAllocationStore.deployMockData()
+        visitorReservationStore.deployMockData()
+        parkingSessionStore.deployMockData()
+        billingTransactionStore.deployMockData()
+        toast.success('Data Deployed', 'Demo data has been seeded into the system.')
+    } catch {
+        toast.error('Seed Failed', 'Could not deploy demo data.')
     }
 }
 
 /**
- * Handle resetting of the demo system
+ * Prompt confirmation before resetting
  */
-const handleReset = async () => {
-    isLoading.value = true
+const promptReset = () => {
+    isResetConfirmOpen.value = true
+}
+
+/**
+ * Handle resetting of the demo system after confirmation
+ */
+const handleReset = () => {
     try {
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        await resetAll()
-        toast.success('System Reset', 'All local data has been cleared.')
-    } catch (e) {
-        toast.error('Error', 'Failed to reset system.')
-    } finally {
-        isLoading.value = false
+        store.removeMockData()
+        dashboardStore.removeMockData()
+        notificationStore.removeMockData()
+        kanbanStore.removeMockData()
+        parkingSlotStore.removeMockData()
+        vehicleStore.removeMockData()
+        rfidCredentialStore.removeMockData()
+        parkingAllocationStore.removeMockData()
+        visitorReservationStore.removeMockData()
+        parkingSessionStore.removeMockData()
+        billingTransactionStore.removeMockData()
+        toast.success('System Reset', 'All demo data has been cleared.')
+    } catch {
+        toast.error('Reset Failed', 'Could not clear the data.')
     }
 }
 
 // ============================================================================
 // Configuration
 // ============================================================================
-const items = [
+const staticGroups = [
     [
         {
-            label: 'Login',
-            icon: 'i-lucide-lock',
+            label: 'Application',
+            icon: 'i-lucide-box',
+            color: 'primary',
             to: '/'
-        },
-        {
-            label: 'Agent Kit',
-            icon: 'i-lucide-bot',
-            to: '/agent/ai-rules'
-        },
-        {
-            label: 'Changelog',
-            icon: 'i-lucide-clipboard',
-            to: '/docs/changelogs'
-        },
-    ],
-    [
-        {
-            label: 'Deploy Demo Data',
-            icon: 'i-lucide-database-zap',
-            onSelect: handleSeed
         }
     ],
-    [
-        {
-            label: 'Reset System',
-            icon: 'i-lucide-trash-2',
-            class: 'text-red-500',
-            onSelect: handleReset
-        }
-    ]
-] as any[][]
+    // [
+    //     {
+    //         label: 'Presentation',
+    //         icon: 'i-lucide-airplay',
+    //         to: '/docs/presentation'
+    //     },
+    //     {
+    //         label: 'Documentation',
+    //         icon: 'i-lucide-book',
+    //         to: '/docs/documentation'
+    //     },
+    //     {
+    //         label: 'User Manual',
+    //         icon: 'i-lucide-user',
+    //         to: '/docs/user-manual'
+    //     },
+    //     {
+    //         label: 'Implementation',
+    //         icon: 'i-lucide-construction',
+    //         to: '/docs/implementation'
+    //     },
+    //     {
+    //         label: 'Agent Kit',
+    //         icon: 'i-lucide-bot',
+    //         to: '/agent/ai-rules'
+    //     },
+    //     {
+    //         label: 'Changelog',
+    //         icon: 'i-lucide-file-text',
+    //         to: '/docs/changelog'
+    //     },
+    // ],
+]
+
+const items = computed(() => {
+    const groups: any[][] = [...staticGroups]
+
+    if (isDataDeployed.value) {
+        // Reset group
+        groups.push([
+            {
+                label: 'Reset System',
+                icon: 'i-lucide-trash-2',
+                color: 'error',
+                onSelect: promptReset
+            }
+        ])
+    } else {
+        // Seed group
+        groups.push([
+            {
+                label: 'Deploy Demo Data',
+                icon: 'i-lucide-database-zap',
+                color: 'success',
+                onSelect: handleSeed
+            }
+        ])
+    }
+
+    return groups
+})
 
 // ============================================================================
 // Draggable Logic
@@ -190,5 +273,15 @@ onMounted(() => {
                 Demo Control Center
             </span>
         </div>
+
+        <!-- Reset Confirmation Modal -->
+        <ConfirmationModal
+            v-model:open="isResetConfirmOpen"
+            title="Reset all data?"
+            description="This will permanently delete all seeded users. This action cannot be undone."
+            confirm-label="Yes, Reset"
+            confirm-color="error"
+            @confirm="handleReset"
+        />
     </ClientOnly>
 </template>

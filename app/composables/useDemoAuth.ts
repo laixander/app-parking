@@ -1,56 +1,36 @@
 // ============================================================================
 // Composable: useDemoAuth
 // ============================================================================
-// Simulates a user session and role-based access for the demo.
+// Ergonomic wrapper around authStore for use in pages and components.
+//
+// Usage:
+//   const { currentUser, isAuthenticated, setRole, logout } = useDemoAuth()
+//   setRole('Admin')    // logs in as Admin
+//   logout()            // clears session
 
-export type SystemRole = 'Admin' | 'Employee'
-
-const STORAGE_KEY = 'demo-auth-role'
+import type { SystemRole } from '~/types/auth'
+import { useAuthStore } from '~/stores/authStore'
 
 export const useDemoAuth = () => {
-    // Default to null — user must select a role on the login page
-    const currentRole = useState<SystemRole | null>('demo-auth-role', () => null)
-    const isHydrated = ref(false)
-
-    const load = () => {
-        if (import.meta.server) return
-        const storedRole = localStorage.getItem(STORAGE_KEY) as SystemRole | null
-        if (storedRole) {
-            currentRole.value = storedRole
-        }
-
-        isHydrated.value = true
-    }
-
-    // Eagerly load from localStorage on the client.
-    // This must NOT use onMounted because the composable is also
-    // called from route middleware (no active component instance).
-    if (import.meta.client && !isHydrated.value) {
-        // load()
-        onMounted(load)
-    }
+    const store = useAuthStore()
+    const router = useRouter()
 
     const setRole = (role: SystemRole) => {
-        currentRole.value = role
-        if (import.meta.client) {
-            localStorage.setItem(STORAGE_KEY, role)
-        }
+        store.login(role)
     }
 
-    const logout = () => {
-        currentRole.value = null
-        if (import.meta.client) {
-            localStorage.removeItem(STORAGE_KEY)
-        }
+    const logout = async () => {
+        store.logout()
+        await router.push('/login')
     }
-
-    const isLoggedIn = computed(() => currentRole.value !== null)
 
     return {
-        currentRole,
-        isHydrated,
-        isLoggedIn,
+        currentUser: computed(() => store.currentUser),
+        isAuthenticated: computed(() => store.isAuthenticated),
+        role: computed(() => store.role),
+        isAdmin: computed(() => store.isAdmin),
+        isStaff: computed(() => store.isStaff),
         setRole,
-        logout
+        logout,
     }
 }

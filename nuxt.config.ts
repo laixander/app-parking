@@ -2,7 +2,9 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
-    '@nuxt/ui'
+    '@nuxt/ui',
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
   ],
 
   devtools: {
@@ -29,12 +31,46 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: [
+        '@faker-js/faker',
         '@vue/devtools-core',
         '@vue/devtools-kit',
         '@vueuse/core',
         'chart.js',
+        'pinia',
         'vue-chartjs',
         'zod',
+      ]
+    }
+  },
+
+  ui: {
+    theme: {
+      colors: [
+        'primary',
+        'secondary',
+        'info',
+        'success',
+        'warning',
+        'error',
+        'neutral',
+        // Full Tailwind palette
+        'red',
+        'orange',
+        'amber',
+        'yellow',
+        'lime',
+        'green',
+        'emerald',
+        'teal',
+        'cyan',
+        'sky',
+        'blue',
+        'indigo',
+        'violet',
+        'purple',
+        'fuchsia',
+        'pink',
+        'rose',
       ]
     }
   }

@@ -2,6 +2,12 @@
 // Composable: useAppToast
 // ============================================================================
 // Provides a unified, type-safe interface for application-wide toast notifications.
+// Auto-imported — no manual import needed.
+//
+// Usage:
+//   const toast = useAppToast()
+//   toast.success('Title', 'Description')
+//   toast.error('Error Title', 'Description')
 
 export const useAppToast = () => {
     const toast = useToast()
@@ -27,6 +33,17 @@ export const useAppToast = () => {
                 description,
                 color: 'error',
                 icon: 'i-lucide-x-circle'
+            })
+        },
+        /**
+         * Display a warning notification
+         */
+        warning: (title: string, description?: string) => {
+            toast.add({
+                title,
+                description,
+                color: 'warning',
+                icon: 'i-lucide-triangle-alert'
             })
         }
     }
