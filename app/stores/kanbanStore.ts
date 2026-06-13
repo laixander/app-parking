@@ -11,7 +11,6 @@
 
 import { defineStore } from 'pinia'
 import type { KanbanCard, KanbanColumn } from '~/types/kanban'
-import { SeederService } from '~/utils/seeder'
 
 // ── Column structure (always present, even after reset) ─────────────────
 function createColumnStructure(): KanbanColumn[] {
@@ -22,28 +21,6 @@ function createColumnStructure(): KanbanColumn[] {
         { id: 'review', title: 'Review', icon: 'i-lucide-eye', color: 'violet', cards: [] },
         { id: 'done', title: 'Done', icon: 'i-lucide-circle-check-big', color: 'green', cards: [] },
     ]
-}
-
-function createInitialColumns(): KanbanColumn[] {
-    const cols = createColumnStructure()
-    const getCol = (id: string) => cols.find(c => c.id === id)
-
-    const backlog = getCol('backlog')
-    if (backlog) backlog.cards = SeederService.generateKanbanCards(5)
-
-    const todo = getCol('todo')
-    if (todo) todo.cards = SeederService.generateKanbanCards(7)
-
-    const inProgress = getCol('in-progress')
-    if (inProgress) inProgress.cards = SeederService.generateKanbanCards(3)
-
-    const review = getCol('review')
-    if (review) review.cards = SeederService.generateKanbanCards(4)
-
-    const done = getCol('done')
-    if (done) done.cards = SeederService.generateKanbanCards(12)
-
-    return cols
 }
 
 // ── Store ─────────────────────────────────────────────────────────────────
@@ -91,12 +68,14 @@ export const useKanbanStore = defineStore('kanbanStore', {
         },
 
         /** Deploy mock data into the board for demo purposes. */
-        deployMockData() {
-            const mockColumns = createInitialColumns()
+        async deployMockData() {
+            const data = await $fetch<Record<string, KanbanCard[]>>('/api/kanban')
             this.columns.forEach(col => {
-                const mockCol = mockColumns.find(c => c.id === col.id)
-                if (mockCol && mockCol.cards.length > 0) {
-                    col.cards.push(...mockCol.cards)
+                let mappedKey = col.id
+                if (col.id === 'in-progress') mappedKey = 'inProgress'
+                const mappedData = data[mappedKey]
+                if (mappedData && mappedData.length > 0) {
+                    col.cards.push(...mappedData)
                 }
             })
         },

@@ -22,6 +22,16 @@ useSeoMeta({
   ogImage: '',
   twitterCard: ''
 })
+
+const settings = useSettingsStore()
+const appConfig = useAppConfig()
+
+watchEffect(() => {
+  if (appConfig.ui && appConfig.ui.colors) {
+    appConfig.ui.colors.primary = settings.primaryColor
+    appConfig.ui.colors.neutral = settings.neutralColor
+  }
+})
 </script>
 
 <template>

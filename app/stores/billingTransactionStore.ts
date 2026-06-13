@@ -7,7 +7,7 @@
 //   const store = useBillingTransactionStore()
 
 import { defineStore } from 'pinia'
-import { SeederService, type BillingTransaction } from '~/utils/seeder'
+import type { BillingTransaction } from '~/types/billingTransaction'
 
 export const useBillingTransactionStore = defineStore('billingTransactionStore', {
   state: () => ({
@@ -16,19 +16,20 @@ export const useBillingTransactionStore = defineStore('billingTransactionStore',
   }),
 
   actions: {
-    deployMockData(count: number = 8) {
+    async deployMockData() {
       this.isLoading = true
-      setTimeout(() => {
-        const mockData = SeederService.generateBillingTransactions(count)
+      try {
+        const mockData = await $fetch<BillingTransaction[]>('/api/billing-transactions')
         this.billingTransactions = [...this.billingTransactions, ...mockData]
+      } finally {
         this.isLoading = false
-      }, 500)
+      }
     },
 
     removeMockData() {
       this.isLoading = true
       setTimeout(() => {
-        this.billingTransactions = SeederService.clearBillingTransactions()
+        this.billingTransactions = []
         this.isLoading = false
       }, 300)
     },

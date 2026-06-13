@@ -8,10 +8,10 @@ import { ref, h, computed, useTemplateRef } from 'vue'
 import { UBadge, UIcon, UButton, UDropdownMenu } from '#components'
 import { StatusBadge } from '#components'
 import { useRfidCredentialStore } from '~/stores/rfidCredentialStore'
-import { SeederService } from '~/utils/seeder'
 import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 
 const store = useRfidCredentialStore()
+const settings = useSettingsStore()
 const toast = useAppToast()
 const { log } = useActivityLog()
 
@@ -151,7 +151,7 @@ const table = useTemplateRef('table')
 const globalFilter = ref('')
 const columnVisibility = ref({ id: false })
 
-const viewMode = ref<'list' | 'card'>('list')
+const viewMode = ref<'list' | 'card'>(settings.defaultViewMode)
 const filteredRfids = computed(() => {
     if (!globalFilter.value) return store.rfidCredentials
     const search = globalFilter.value.toLowerCase()

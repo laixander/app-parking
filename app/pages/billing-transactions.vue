@@ -5,10 +5,10 @@ import { ref, h, computed, useTemplateRef } from 'vue'
 import { UBadge, UIcon, UButton, UDropdownMenu } from '#components'
 import { StatusBadge } from '#components'
 import { useBillingTransactionStore } from '~/stores/billingTransactionStore'
-import { SeederService } from '~/utils/seeder'
 import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 
 const store = useBillingTransactionStore()
+const settings = useSettingsStore()
 const toast = useAppToast()
 const { log } = useActivityLog()
 
@@ -155,7 +155,7 @@ const table = useTemplateRef('table')
 const globalFilter = ref('')
 const columnVisibility = ref({ id: false })
 
-const viewMode = ref<'list' | 'card'>('list')
+const viewMode = ref<'list' | 'card'>(settings.defaultViewMode)
 const filteredTransactions = computed(() => {
     if (!globalFilter.value) return store.billingTransactions
     const search = globalFilter.value.toLowerCase()

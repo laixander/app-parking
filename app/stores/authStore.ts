@@ -13,12 +13,9 @@ import { defineStore } from 'pinia'
 import type { AuthUser, SystemRole } from '~/types/auth'
 
 // Pre-built demo user profiles per role
-const DEMO_USERS: Record<SystemRole, AuthUser> = {
-    'Property Admin': { name: 'Alex Rivera', role: 'Property Admin' },
-    'Parking Operations': { name: 'Sam Torres', role: 'Parking Operations' },
-    'Front Desk': { name: 'Jamie Chen', role: 'Front Desk' },
-    'Security': { name: 'Marcus Cole', role: 'Security' },
-    'Finance': { name: 'Linda Park', role: 'Finance' },
+const MOCK_USERS: Record<SystemRole, AuthUser> = {
+    'Admin': { name: 'Alex Rivera', role: 'Admin' },
+    'Staff': { name: 'Sam Torres', role: 'Staff' },
 }
 
 export const useAuthStore = defineStore('authStore', {
@@ -32,15 +29,15 @@ export const useAuthStore = defineStore('authStore', {
         /** Returns the system role of the currently logged-in user. */
         role: (state): SystemRole | null => state.currentUser?.role ?? null,
         /** Returns true if the logged-in user is an Admin. */
-        isAdmin: (state): boolean => state.currentUser?.role === 'Property Admin',
-        /** Returns true if the logged-in user is Staff. */
-        isStaff: (state): boolean => state.currentUser?.role !== 'Property Admin',
+        isAdmin: (state): boolean => state.currentUser?.role === 'Admin',
+        // Example dynamic getter: true if user is Staff
+        isStaff: (state): boolean => state.currentUser?.role === 'Staff',
     },
 
     actions: {
         /** Logs in a demo user with the specified role. */
         login(role: SystemRole) {
-            this.currentUser = DEMO_USERS[role]
+            this.currentUser = MOCK_USERS[role]
         },
 
         /** Clears the current user session. */

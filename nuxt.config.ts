@@ -31,7 +31,6 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: [
-        '@faker-js/faker',
         '@vue/devtools-core',
         '@vue/devtools-kit',
         '@vueuse/core',

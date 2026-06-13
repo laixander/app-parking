@@ -2,7 +2,7 @@
 // Types: Auth
 // ============================================================================
 
-export type SystemRole = 'Property Admin' | 'Parking Operations' | 'Front Desk' | 'Security' | 'Finance'
+export type SystemRole = 'Admin' | 'Staff'
 
 export interface AuthUser {
     name: string

@@ -20,7 +20,7 @@ const isDark = computed({
     set: (val) => { colorMode.preference = val ? 'dark' : 'light' },
 })
 
-const primaryColors = ['teal', 'blue', 'violet', 'rose', 'orange', 'emerald', 'sky', 'pink', 'indigo']
+const primaryColors = ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose']
 const neutralColors = ['slate', 'gray', 'zinc', 'neutral', 'stone', 'taupe', 'mauve', 'mist', 'olive']
 
 // ── Data Management ───────────────────────────────────────────────────────
@@ -130,13 +130,13 @@ const confirmResetSettings = () => {
                             <button
                                 class="size-7 rounded-full ring-2 ring-offset-2 ring-offset-default transition-all flex items-center justify-center"
                                 :class="[
-                                    appConfig.ui.colors.primary === color
+                                    settings.primaryColor === color
                                         ? 'ring-default scale-110'
                                         : 'ring-transparent hover:scale-105'
                                 ]" :style="`background-color: var(--color-${color}-500)`"
                                 :aria-label="`Set ${color} as primary color`"
-                                @click="appConfig.ui.colors.primary = color">
-                                <UIcon v-if="appConfig.ui.colors.primary === color" name="i-lucide-check"
+                                @click="settings.setPrimaryColor(color)">
+                                <UIcon v-if="settings.primaryColor === color" name="i-lucide-check"
                                     class="size-3.5 text-white drop-shadow" />
                             </button>
                         </UTooltip>
@@ -155,13 +155,13 @@ const confirmResetSettings = () => {
                             <button
                                 class="size-7 rounded-full ring-2 ring-offset-2 ring-offset-default transition-all flex items-center justify-center"
                                 :class="[
-                                    appConfig.ui.colors.neutral === color
+                                    settings.neutralColor === color
                                         ? 'ring-default scale-110'
                                         : 'ring-transparent hover:scale-105'
                                 ]" :style="`background-color: var(--color-${color}-500)`"
                                 :aria-label="`Set ${color} as neutral color`"
-                                @click="appConfig.ui.colors.neutral = color">
-                                <UIcon v-if="appConfig.ui.colors.neutral === color" name="i-lucide-check"
+                                @click="settings.setNeutralColor(color)">
+                                <UIcon v-if="settings.neutralColor === color" name="i-lucide-check"
                                     class="size-3.5 text-white drop-shadow" />
                             </button>
                         </UTooltip>

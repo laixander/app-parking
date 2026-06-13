@@ -15,6 +15,8 @@ export const useSettingsStore = defineStore('settingsStore', {
     state: () => ({
         defaultViewMode: 'list' as 'list' | 'card',
         sidebarCollapsed: false,
+        primaryColor: 'teal',
+        neutralColor: 'taupe',
     }),
 
     actions: {
@@ -28,10 +30,22 @@ export const useSettingsStore = defineStore('settingsStore', {
             this.sidebarCollapsed = collapsed
         },
 
+        /** Sets the primary accent color. */
+        setPrimaryColor(color: string) {
+            this.primaryColor = color
+        },
+
+        /** Sets the neutral scale color. */
+        setNeutralColor(color: string) {
+            this.neutralColor = color
+        },
+
         /** Resets all user settings back to their default values. */
         resetToDefaults() {
             this.defaultViewMode = 'list'
             this.sidebarCollapsed = false
+            this.primaryColor = 'teal'
+            this.neutralColor = 'taupe'
         },
     },
 

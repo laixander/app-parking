@@ -7,7 +7,7 @@
 //   const store = useVisitorReservationStore()
 
 import { defineStore } from 'pinia'
-import { SeederService, type VisitorReservation } from '~/utils/seeder'
+import type { VisitorReservation } from '~/types/visitorReservation'
 
 export const useVisitorReservationStore = defineStore('visitorReservationStore', {
   state: () => ({
@@ -16,19 +16,20 @@ export const useVisitorReservationStore = defineStore('visitorReservationStore',
   }),
 
   actions: {
-    deployMockData(count: number = 6) {
+    async deployMockData() {
       this.isLoading = true
-      setTimeout(() => {
-        const mockData = SeederService.generateVisitorReservations(count)
+      try {
+        const mockData = await $fetch<VisitorReservation[]>('/api/visitor-reservations')
         this.visitorReservations = [...this.visitorReservations, ...mockData]
+      } finally {
         this.isLoading = false
-      }, 500)
+      }
     },
 
     removeMockData() {
       this.isLoading = true
       setTimeout(() => {
-        this.visitorReservations = SeederService.clearVisitorReservations()
+        this.visitorReservations = []
         this.isLoading = false
       }, 300)
     },

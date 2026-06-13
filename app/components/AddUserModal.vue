@@ -3,7 +3,7 @@ import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { SystemRole } from '~/types/auth'
 
-const ROLE_OPTIONS: SystemRole[] = ['Property Admin', 'Parking Operations', 'Front Desk', 'Security', 'Finance']
+const ROLE_OPTIONS: SystemRole[] = ['Admin', 'Staff']
 
 // ============================================================================
 // Props, Models & Emits
@@ -21,7 +21,7 @@ const emit = defineEmits<{
 // ============================================================================
 const schema = z.object({
     name:   z.string().min(1, 'Full name is required'),
-    role:   z.enum(['Property Admin', 'Parking Operations', 'Front Desk', 'Security', 'Finance'] as const, { message: 'Job assignment is required' }),
+    role:   z.enum(['Admin', 'Staff'] as const, { message: 'Job assignment is required' }),
     email:  z.string().email('Please enter a valid email address'),
     status: z.enum(['Active', 'Inactive'], { message: 'Please select a status' }),
 })

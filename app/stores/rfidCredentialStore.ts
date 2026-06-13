@@ -7,7 +7,7 @@
 //   const store = useRfidCredentialStore()
 
 import { defineStore } from 'pinia'
-import { SeederService, type RfidCredential } from '~/utils/seeder'
+import type { RfidCredential } from '~/types/rfidCredential'
 
 export const useRfidCredentialStore = defineStore('rfidCredentialStore', {
   state: () => ({
@@ -16,19 +16,20 @@ export const useRfidCredentialStore = defineStore('rfidCredentialStore', {
   }),
 
   actions: {
-    deployMockData(count: number = 6) {
+    async deployMockData() {
       this.isLoading = true
-      setTimeout(() => {
-        const mockData = SeederService.generateRfidCredentials(count)
+      try {
+        const mockData = await $fetch<RfidCredential[]>('/api/rfid-credentials')
         this.rfidCredentials = [...this.rfidCredentials, ...mockData]
+      } finally {
         this.isLoading = false
-      }, 500)
+      }
     },
 
     removeMockData() {
       this.isLoading = true
       setTimeout(() => {
-        this.rfidCredentials = SeederService.clearRfidCredentials()
+        this.rfidCredentials = []
         this.isLoading = false
       }, 300)
     },

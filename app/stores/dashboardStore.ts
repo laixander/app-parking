@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { SeederService } from '~/utils/seeder'
 import { useBillingTransactionStore } from './billingTransactionStore'
 import { useParkingSessionStore } from './parkingSessionStore'
 import { useParkingSlotStore } from './parkingSlotStore'
@@ -40,14 +39,15 @@ export const useDashboardStore = defineStore('dashboardStore', {
     },
 
     actions: {
-        deployMockData() {
+        async deployMockData() {
             this.isLoading = true
-            setTimeout(() => {
-                const data = SeederService.generateDashboard()
+            try {
+                const data = await $fetch<DashboardData>('/api/dashboard')
                 this.recentActivity = data.recentActivity
                 this.revenueChart = data.revenueChart
+            } finally {
                 this.isLoading = false
-            }, 500)
+            }
         },
 
         removeMockData() {

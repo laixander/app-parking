@@ -8,7 +8,6 @@ import { ref, h, computed } from 'vue'
 import { UAvatar, UBadge, UIcon, UButton, UDropdownMenu } from '#components'
 import { StatusBadge } from '#components'
 import { useUserStore } from '~/stores/userStore'
-import { SeederService } from '~/utils/seeder'
 import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 
 const store = useUserStore()
@@ -28,7 +27,7 @@ const modalRef = useTemplateRef('modalRef')
 const openCreateModal = () => {
     isEditing.value = false
     currentUserId.value = null
-    modalRef.value?.reset({ avatar: SeederService.generateSingleUser().avatar })
+    modalRef.value?.reset({ avatar: `https://api.dicebear.com/10.x/thumbs/svg?seed=${crypto.randomUUID()}` })
     isOpen.value = true
 }
 
@@ -38,7 +37,7 @@ const openEditModal = (user: User) => {
     modalRef.value?.reset({
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: user.role as any,
         avatar: user.avatar,
         status: user.status,
     })

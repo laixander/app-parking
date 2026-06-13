@@ -7,7 +7,7 @@
 //   const store = useParkingSessionStore()
 
 import { defineStore } from 'pinia'
-import { SeederService, type ParkingSession } from '~/utils/seeder'
+import type { ParkingSession } from '~/types/parkingSession'
 
 export interface SessionColumn {
     id: 'Active' | 'Completed' | 'Overstay'
@@ -32,16 +32,21 @@ export const useParkingSessionStore = defineStore('parkingSessionStore', {
     }),
 
     actions: {
-        deployMockData(count: number = 12) {
+        /** Deploy mock data into the board for demo purposes. */
+        async deployMockData() {
             this.isLoading = true
-            setTimeout(() => {
-                const mockData = SeederService.generateParkingSessions(count)
-                mockData.forEach(session => {
-                    const col = this.columns.find(c => c.id === session.status)
-                    if (col) col.cards.push(session)
+            try {
+                const mockData = await $fetch<ParkingSession[]>('/api/parking-sessions')
+                
+                this.columns.forEach(col => {
+                    const statusData = mockData.filter(s => s.status === col.id)
+                    if (statusData.length > 0) {
+                        col.cards.push(...statusData)
+                    }
                 })
+            } finally {
                 this.isLoading = false
-            }, 500)
+            }
         },
 
         removeMockData() {

@@ -10,7 +10,7 @@
 //   store.deleteUser(id)
 
 import { defineStore } from 'pinia'
-import { SeederService, type User } from '~/utils/seeder'
+import type { User } from '~/types/user'
 
 export const useUserStore = defineStore('userStore', {
     state: () => ({
@@ -20,20 +20,21 @@ export const useUserStore = defineStore('userStore', {
 
     actions: {
         /** Deploy mock user data into the store. */
-        deployMockData(count: number = 6) {
+        async deployMockData() {
             this.isLoading = true
-            setTimeout(() => {
-                const mockUsers = SeederService.generateUsers(count)
-                this.users = [...this.users, ...mockUsers]
+            try {
+                const data = await $fetch<User[]>('/api/users')
+                this.users = [...this.users, ...data]
+            } finally {
                 this.isLoading = false
-            }, 500)
+            }
         },
 
         /** Clear all mock user data from the store. */
         removeMockData() {
             this.isLoading = true
             setTimeout(() => {
-                this.users = SeederService.clearUsers()
+                this.users = []
                 this.isLoading = false
             }, 300)
         },

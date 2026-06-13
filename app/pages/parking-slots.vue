@@ -8,10 +8,10 @@ import { ref, h, computed, useTemplateRef } from 'vue'
 import { UBadge, UIcon, UButton, UDropdownMenu } from '#components'
 import { StatusBadge } from '#components'
 import { useParkingSlotStore } from '~/stores/parkingSlotStore'
-import { SeederService } from '~/utils/seeder'
 import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 
 const store = useParkingSlotStore()
+const settings = useSettingsStore()
 const toast = useAppToast()
 const { log } = useActivityLog()
 
@@ -144,7 +144,7 @@ const table = useTemplateRef('table')
 const globalFilter = ref('')
 const columnVisibility = ref({ id: false })
 
-const viewMode = ref<'list' | 'card'>('list')
+const viewMode = ref<'list' | 'card'>(settings.defaultViewMode)
 const filteredParkingSlots = computed(() => {
     if (!globalFilter.value) return store.parkingSlots
     const search = globalFilter.value.toLowerCase()

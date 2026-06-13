@@ -12,7 +12,6 @@
 //   store.deleteNotification(id)
 //   store.unreadCount    // reactive getter used by sidebar badge
 
-import { faker } from '@faker-js/faker'
 import { defineStore } from 'pinia'
 import type { Notification, NotificationType } from '~/types/notification'
 import type { NotificationTemplateId } from '~/utils/notificationTemplates'
@@ -93,26 +92,30 @@ export const useNotificationStore = defineStore('notificationStore', {
                 { id: 'system_alert', type: 'info', module: 'System' }
             ] as const
 
+            const mockNames = ['Alex Rivera', 'Sam Torres', 'Jamie Chen', 'Marcus Cole', 'Linda Park']
+            const randomElement = <T>(arr: readonly T[] | T[]): T => arr[Math.floor(Math.random() * arr.length)]!
+
             // 3. Generate 15 random notifications
             for (let i = 0; i < 15; i++) {
-                const t = faker.helpers.arrayElement(templates)
+                const t = randomElement(templates)
                 let payload: Record<string, any> = {}
 
-                if (t.id === 'user_created') payload = { userName: faker.person.fullName() }
-                if (t.id === 'storage_warning') payload = { usage: faker.number.int({ min: 80, max: 99 }) }
-                if (t.id === 'log_cleared') payload = { adminName: faker.person.fullName() }
-                if (t.id === 'export_complete') payload = { exportType: faker.helpers.arrayElement(['User Data', 'Activity Logs', 'System Config']) }
-                if (t.id === 'failed_login') payload = { email: faker.internet.email() }
-                if (t.id === 'system_alert') payload = { message: faker.hacker.phrase() }
+                if (t.id === 'user_created') payload = { userName: randomElement(mockNames) }
+                if (t.id === 'storage_warning') payload = { usage: Math.floor(Math.random() * 20) + 80 }
+                if (t.id === 'log_cleared') payload = { adminName: randomElement(mockNames) }
+                if (t.id === 'export_complete') payload = { exportType: randomElement(['User Data', 'Activity Logs', 'System Config']) }
+                if (t.id === 'failed_login') payload = { email: 'unknown@example.com' }
+                if (t.id === 'system_alert') payload = { message: 'Performance degradation detected in API endpoints.' }
 
                 // Random time within the last 7 days
-                const createdAt = new Date(now - faker.number.int({ min: 10 * 60 * 1000, max: 7 * 24 * 60 * 60 * 1000 })).toISOString()
+                const randomOffset = Math.floor(Math.random() * (7 * 24 * 60 * 60 * 1000 - 10 * 60 * 1000)) + 10 * 60 * 1000
+                const createdAt = new Date(now - randomOffset).toISOString()
 
                 mock.push({
                     templateId: t.id,
                     payload,
                     type: t.type,
-                    isRead: faker.datatype.boolean({ probability: 0.6 }), // 60% chance it is already read
+                    isRead: Math.random() > 0.4, // 60% chance it is already read
                     createdAt,
                     module: t.module
                 })

@@ -7,7 +7,7 @@
 //   const store = useParkingSlotStore()
 
 import { defineStore } from 'pinia'
-import { SeederService, type ParkingSlot } from '~/utils/seeder'
+import type { ParkingSlot } from '~/types/parkingSlot'
 
 export const useParkingSlotStore = defineStore('parkingSlotStore', {
   state: () => ({
@@ -16,19 +16,20 @@ export const useParkingSlotStore = defineStore('parkingSlotStore', {
   }),
 
   actions: {
-    deployMockData(count: number = 6) {
+    async deployMockData() {
       this.isLoading = true
-      setTimeout(() => {
-        const mockData = SeederService.generateParkingSlots(count)
+      try {
+        const mockData = await $fetch<ParkingSlot[]>('/api/parking-slots')
         this.parkingSlots = [...this.parkingSlots, ...mockData]
+      } finally {
         this.isLoading = false
-      }, 500)
+      }
     },
 
     removeMockData() {
       this.isLoading = true
       setTimeout(() => {
-        this.parkingSlots = SeederService.clearParkingSlots()
+        this.parkingSlots = []
         this.isLoading = false
       }, 300)
     },

@@ -12,42 +12,24 @@ const selectedRole = ref<SystemRole | undefined>(undefined)
 
 const roleOptions: { label: string; value: SystemRole; description: string; icon: string }[] = [
     {
-        label: 'Property Admin',
-        value: 'Property Admin',
+        label: 'Admin',
+        value: 'Admin',
         description: 'Full access to all pages and features',
         icon: 'i-lucide-shield-check'
     },
     {
-        label: 'Parking Operations',
-        value: 'Parking Operations',
-        description: 'Manage allocations, slots, and RFID inventory',
-        icon: 'i-lucide-car'
-    },
-    {
-        label: 'Front Desk',
-        value: 'Front Desk',
-        description: 'Manage visitor reservations and validations',
+        label: 'Staff',
+        value: 'Staff',
+        description: 'Manage daily operations and users',
         icon: 'i-lucide-users'
-    },
-    {
-        label: 'Security',
-        value: 'Security',
-        description: 'Manage walk-ins and active parking sessions',
-        icon: 'i-lucide-shield'
-    },
-    {
-        label: 'Finance',
-        value: 'Finance',
-        description: 'Manage billing and transactions',
-        icon: 'i-lucide-receipt'
-    },
+    }
 ]
 
 const handleLogin = () => {
     if (!selectedRole.value) return
     setRole(selectedRole.value)
 
-    if (selectedRole.value === 'Property Admin') {
+    if (selectedRole.value === 'Admin') {
         router.push('/')
     } else {
         router.push('/activity-logs')
@@ -60,8 +42,8 @@ const handleLogin = () => {
         <UCard class="w-full max-w-sm shadow-sm">
             <header class="space-y-3 text-center">
                 <div class="flex items-center justify-center gap-2">
-                    <UIcon name="i-ph-codesandbox-logo-duotone" class="size-8 text-primary" />
-                    <span class="text-2xl font-black tracking-tight">Sand<span class="text-primary">Box</span></span>
+                    <UIcon name="i-ph-car-duotone" class="size-8 text-primary" />
+                    <span class="text-2xl font-black tracking-tight">Park<span class="text-primary">Flow</span></span>
                 </div>
                 <div class="text-sm text-muted">Sign in to your account to continue</div>
             </header>

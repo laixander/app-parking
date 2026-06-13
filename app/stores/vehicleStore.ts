@@ -7,7 +7,7 @@
 //   const store = useVehicleStore()
 
 import { defineStore } from 'pinia'
-import { SeederService, type Vehicle } from '~/utils/seeder'
+import type { Vehicle } from '~/types/vehicle'
 
 export const useVehicleStore = defineStore('vehicleStore', {
   state: () => ({
@@ -16,19 +16,20 @@ export const useVehicleStore = defineStore('vehicleStore', {
   }),
 
   actions: {
-    deployMockData(count: number = 6) {
+    async deployMockData() {
       this.isLoading = true
-      setTimeout(() => {
-        const mockData = SeederService.generateVehicles(count)
+      try {
+        const mockData = await $fetch<Vehicle[]>('/api/vehicles')
         this.vehicles = [...this.vehicles, ...mockData]
+      } finally {
         this.isLoading = false
-      }, 500)
+      }
     },
 
     removeMockData() {
       this.isLoading = true
       setTimeout(() => {
-        this.vehicles = SeederService.clearVehicles()
+        this.vehicles = []
         this.isLoading = false
       }, 300)
     },

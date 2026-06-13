@@ -7,7 +7,7 @@
 //   const store = useParkingAllocationStore()
 
 import { defineStore } from 'pinia'
-import { SeederService, type ParkingAllocation } from '~/utils/seeder'
+import type { ParkingAllocation } from '~/types/parkingAllocation'
 
 export const useParkingAllocationStore = defineStore('parkingAllocationStore', {
   state: () => ({
@@ -16,19 +16,20 @@ export const useParkingAllocationStore = defineStore('parkingAllocationStore', {
   }),
 
   actions: {
-    deployMockData(count: number = 6) {
+    async deployMockData() {
       this.isLoading = true
-      setTimeout(() => {
-        const mockData = SeederService.generateParkingAllocations(count)
+      try {
+        const mockData = await $fetch<ParkingAllocation[]>('/api/parking-allocations')
         this.parkingAllocations = [...this.parkingAllocations, ...mockData]
+      } finally {
         this.isLoading = false
-      }, 500)
+      }
     },
 
     removeMockData() {
       this.isLoading = true
       setTimeout(() => {
-        this.parkingAllocations = SeederService.clearParkingAllocations()
+        this.parkingAllocations = []
         this.isLoading = false
       }, 300)
     },
