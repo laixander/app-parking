@@ -33,14 +33,18 @@ const chartData = computed(() => {
 
 <template>
     <PageHeading title="Dashboard" description="Real-time facility operations and revenue metrics." />
-    
+
     <ClientOnly>
         <!-- ── Stat Cards ────────────────────────────────────────────── -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-            <StatCard title="Total Revenue" :value="formatter.format(store.overview.totalRevenue)" icon="i-lucide-wallet" trend="Live from Billing" trend-direction="up" />
-            <StatCard title="Unpaid Invoices" :value="String(store.overview.unpaidInvoices)" icon="i-lucide-receipt" trend="Live from Billing" trend-direction="flat" />
-            <StatCard title="Active Sessions" :value="String(store.overview.activeSessions)" icon="i-lucide-car-front" trend="Live from Sessions" trend-direction="up" />
-            <StatCard title="Occupancy Rate" :value="`${store.overview.occupancyRate}%`" icon="i-lucide-pie-chart" trend="Live from Slots" trend-direction="flat" />
+            <StatCard title="Total Revenue" :value="formatter.format(store.overview.totalRevenue)"
+                icon="i-lucide-wallet" trend="Live from Billing" trend-direction="up" />
+            <StatCard title="Unpaid Invoices" :value="String(store.overview.unpaidInvoices)" icon="i-lucide-receipt"
+                trend="Live from Billing" trend-direction="flat" />
+            <StatCard title="Active Sessions" :value="String(store.overview.activeSessions)" icon="i-lucide-car-front"
+                trend="Live from Sessions" trend-direction="up" />
+            <StatCard title="Occupancy Rate" :value="`${store.overview.occupancyRate}%`" icon="i-lucide-pie-chart"
+                trend="Live from Slots" trend-direction="flat" />
         </div>
 
         <div class="mt-6">
@@ -54,7 +58,8 @@ const chartData = computed(() => {
                 </div>
                 <div class="flex-1 min-h-[300px] w-full">
                     <Line v-if="store.revenueChart.length > 0" :data="chartData" :options="defaultOptions" />
-                    <div v-else class="h-full flex items-center justify-center text-muted py-12">No data available</div>
+                    <UEmpty v-else variant="naked" icon="i-lucide-chart-line" title="No data available"
+                        description="No revenue data available yet." />
                 </div>
             </UCard>
         </div>

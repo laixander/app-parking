@@ -26,6 +26,7 @@ const visitorReservationStore = useVisitorReservationStore()
 const parkingSessionStore = useParkingSessionStore()
 const billingTransactionStore = useBillingTransactionStore()
 const toast = useAppToast()
+const route = useRoute()
 
 const isLoading = computed(() => store.isLoading || dashboardStore.isLoading || parkingSlotStore.isLoading || vehicleStore.isLoading || rfidCredentialStore.isLoading || parkingAllocationStore.isLoading || visitorReservationStore.isLoading || parkingSessionStore.isLoading || billingTransactionStore.isLoading)
 const isDataDeployed = computed(() => dashboardStore.hasDashboardData || parkingSessionStore.hasParkingSessions || billingTransactionStore.hasBillingTransactions)
@@ -44,7 +45,7 @@ const isResetConfirmOpen = ref(false)
  */
 const handleSeed = async () => {
     try {
-        store.deployMockData(9)
+        store.deployMockData()
         dashboardStore.deployMockData()
         notificationStore.deployMockData()
         kanbanStore.deployMockData()
@@ -93,51 +94,50 @@ const handleReset = () => {
 // ============================================================================
 // Configuration
 // ============================================================================
-const staticGroups = [
-    [
-        {
-            label: 'Application',
-            icon: 'i-lucide-box',
-            color: 'primary',
-            to: '/'
-        }
-    ],
-    // [
-    //     {
-    //         label: 'Presentation',
-    //         icon: 'i-lucide-airplay',
-    //         to: '/docs/presentation'
-    //     },
-    //     {
-    //         label: 'Documentation',
-    //         icon: 'i-lucide-book',
-    //         to: '/docs/documentation'
-    //     },
-    //     {
-    //         label: 'User Manual',
-    //         icon: 'i-lucide-user',
-    //         to: '/docs/user-manual'
-    //     },
-    //     {
-    //         label: 'Implementation',
-    //         icon: 'i-lucide-construction',
-    //         to: '/docs/implementation'
-    //     },
-    //     {
-    //         label: 'Agent Kit',
-    //         icon: 'i-lucide-bot',
-    //         to: '/agent/ai-rules'
-    //     },
-    //     {
-    //         label: 'Changelog',
-    //         icon: 'i-lucide-file-text',
-    //         to: '/docs/changelog'
-    //     },
-    // ],
-]
-
 const items = computed(() => {
-    const groups: any[][] = [...staticGroups]
+    const groups: any[][] = [
+        [
+            {
+                label: 'Application',
+                icon: 'i-lucide-box',
+                color: 'primary',
+                to: '/',
+                active: !route.path.startsWith('/docs')
+            }
+        ],
+        [
+            {
+                label: 'Presentation',
+                icon: 'i-lucide-airplay',
+                to: '/docs/presentation'
+            },
+            {
+                label: 'Documentation',
+                icon: 'i-lucide-book',
+                to: '/docs/documentation'
+            },
+            {
+                label: 'User Manual',
+                icon: 'i-lucide-user',
+                to: '/docs/user-manual'
+            },
+            // {
+            //     label: 'Implementation',
+            //     icon: 'i-lucide-construction',
+            //     to: '/docs/implementation'
+            // },
+            // {
+            //     label: 'Agent Kit',
+            //     icon: 'i-lucide-bot',
+            //     to: '/agent/ai-rules'
+            // },
+            {
+                label: 'Changelog',
+                icon: 'i-lucide-file-text',
+                to: '/docs/changelog'
+            },
+        ],
+    ]
 
     if (isDataDeployed.value) {
         // Reset group
@@ -275,13 +275,8 @@ onMounted(() => {
         </div>
 
         <!-- Reset Confirmation Modal -->
-        <ConfirmationModal
-            v-model:open="isResetConfirmOpen"
-            title="Reset all data?"
+        <ConfirmationModal v-model:open="isResetConfirmOpen" title="Reset all data?"
             description="This will permanently delete all seeded users. This action cannot be undone."
-            confirm-label="Yes, Reset"
-            confirm-color="error"
-            @confirm="handleReset"
-        />
+            confirm-label="Yes, Reset" confirm-color="error" @confirm="handleReset" />
     </ClientOnly>
 </template>

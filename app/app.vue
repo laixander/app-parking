@@ -39,5 +39,6 @@ watchEffect(() => {
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <DemoFab />
   </UApp>
 </template>

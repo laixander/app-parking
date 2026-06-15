@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-    title: 'CRUD',
+    title: 'System Users',
     isTable: true,
 })
 
@@ -8,9 +8,13 @@ import { ref, h, computed } from 'vue'
 import { UAvatar, UBadge, UIcon, UButton, UDropdownMenu } from '#components'
 import { StatusBadge } from '#components'
 import { useUserStore } from '~/stores/userStore'
+import { useRoleStore } from '~/stores/roleStore'
+import { useUserRoleStore } from '~/stores/userRoleStore'
 import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 
 const store = useUserStore()
+const roleStore = useRoleStore()
+const userRoleStore = useUserRoleStore()
 const toast = useAppToast()
 const { log } = useActivityLog()
 const settings = useSettingsStore()
@@ -21,8 +25,35 @@ type User = typeof store.users[0]
 const isOpen = ref(false)
 const isEditing = ref(false)
 const currentUserId = ref<string | null>(null)
-const pendingSaveData = ref<{ name: string; role: string; email: string; avatar: string; status: 'Active' | 'Inactive' } | null>(null)
+const pendingSaveData = ref<{ name: string; email: string; avatar: string; status: 'Active' | 'Inactive' } | null>(null)
 const modalRef = useTemplateRef('modalRef')
+
+// ── Roles Modal state ──────────────────────────────────────────────────────
+const isManageRolesOpen = ref(false)
+const manageRolesUserId = ref<string | null>(null)
+const manageRolesModalRef = useTemplateRef('manageRolesModalRef')
+
+const openManageRolesModal = (user: User) => {
+    manageRolesUserId.value = user.id
+    const currentRoles = userRoleStore.rolesForUser(user.id)
+    manageRolesModalRef.value?.reset(currentRoles)
+    isManageRolesOpen.value = true
+}
+
+const handleManageRolesSave = (roleIds: string[]) => {
+    if (manageRolesUserId.value) {
+        userRoleStore.setRolesForUser(manageRolesUserId.value, roleIds)
+        const user = store.users.find((u: User) => u.id === manageRolesUserId.value)
+        log('Users', 'updated', `Updated roles for user "${user?.name ?? 'Unknown'}"`, { meta: { id: manageRolesUserId.value } })
+        toast.success('Roles Updated', `Roles for ${user?.name} have been saved.`)
+    }
+    isManageRolesOpen.value = false
+}
+
+const getRoleNames = (userId: string) => {
+    const roleIds = userRoleStore.rolesForUser(userId)
+    return roleIds.map((id: string) => roleStore.roles.find((r: any) => r.id === id)?.name || 'Unknown Role')
+}
 
 const openCreateModal = () => {
     isEditing.value = false
@@ -37,7 +68,6 @@ const openEditModal = (user: User) => {
     modalRef.value?.reset({
         name: user.name,
         email: user.email,
-        role: user.role as any,
         avatar: user.avatar,
         status: user.status,
     })
@@ -45,16 +75,16 @@ const openEditModal = (user: User) => {
 }
 
 // Called by AddUserModal after Zod validation passes
-const handleSave = (data: { name: string; role: string; email: string; avatar: string; status: 'Active' | 'Inactive' }) => {
+const handleSave = (data: { name: string; email: string; avatar: string; status: 'Active' | 'Inactive' }) => {
     if (isEditing.value && currentUserId.value) {
         // Stash validated data then show confirmation
         pendingSaveData.value = data
         isOpen.value = false
         isEditConfirmOpen.value = true
     } else {
-        const newUser = { id: crypto.randomUUID(), ...data }
+        const newUser = { id: crypto.randomUUID(), role: '', ...data }
         store.createUser(newUser)
-        log('Users', 'created', `Created user "${data.name}" (${data.role})`, { meta: { id: newUser.id } })
+        log('Users', 'created', `Created user "${data.name}"`, { meta: { id: newUser.id } })
         isOpen.value = false
         toast.success('User Created', `${data.name} has been added.`)
     }
@@ -63,7 +93,7 @@ const handleSave = (data: { name: string; role: string; email: string; avatar: s
 const confirmSave = () => {
     if (currentUserId.value && pendingSaveData.value) {
         store.updateUser(currentUserId.value, { ...pendingSaveData.value })
-        log('Users', 'updated', `Updated user "${pendingSaveData.value.name}" (${pendingSaveData.value.role})`, { meta: { id: currentUserId.value } })
+        log('Users', 'updated', `Updated user "${pendingSaveData.value.name}"`, { meta: { id: currentUserId.value } })
         toast.success('User Updated', `${pendingSaveData.value.name}'s profile has been saved.`)
         pendingSaveData.value = null
     }
@@ -103,11 +133,6 @@ const tableColumns: TableColumn<User>[] = [
         ])
     },
     {
-        accessorKey: 'role',
-        header: 'Role',
-        cell: ({ row }) => h('span', { class: '' }, row.original.role)
-    },
-    {
         accessorKey: 'email',
         header: 'Email',
         cell: ({ row }) => h('span', { class: 'flex items-center gap-1' }, [
@@ -124,6 +149,19 @@ const tableColumns: TableColumn<User>[] = [
         })
     },
     {
+        id: 'assignedRoles',
+        header: 'Assigned Roles',
+        cell: ({ row }) => {
+            const roleNames = getRoleNames(row.original.id)
+            if (roleNames.length === 0) {
+                return h('span', { class: 'text-muted italic text-xs' }, 'No roles assigned')
+            }
+            return h('div', { class: 'flex flex-wrap gap-1' }, roleNames.map((name: string) => 
+                h(UBadge, { label: name, variant: 'subtle', color: 'primary', size: 'sm' })
+            ))
+        }
+    },
+    {
         accessorKey: 'id',
         header: 'ID',
         cell: ({ row }) => h(UBadge, {
@@ -138,7 +176,14 @@ const tableColumns: TableColumn<User>[] = [
         header: '',
         meta: { class: { td: 'text-right' } },
         cell: ({ row }) => {
-            const items: DropdownMenuItem[][] = [
+            const items: any[][] = [
+                [
+                    {
+                        label: 'Manage Roles',
+                        icon: 'i-lucide-shield-plus',
+                        onSelect: () => openManageRolesModal(row.original)
+                    }
+                ],
                 [
                     {
                         label: 'Edit',
@@ -184,7 +229,7 @@ const filteredUsers = computed(() => {
     return store.users.filter((user: User) =>
         user.name.toLowerCase().includes(search) ||
         user.email.toLowerCase().includes(search) ||
-        user.role.toLowerCase().includes(search) ||
+        getRoleNames(user.id).some((roleName: string) => roleName.toLowerCase().includes(search)) ||
         user.status.toLowerCase().includes(search) ||
         user.id.toLowerCase().includes(search)
     )
@@ -231,6 +276,8 @@ const filteredUsers = computed(() => {
                             <div class="text-sm font-bold truncate">{{ user.name }}</div>
                         </div>
                         <UDropdownMenu :items="[[
+                            { label: 'Manage Roles', icon: 'i-lucide-shield-plus', onSelect: () => openManageRolesModal(user) }
+                        ], [
                             { label: 'Edit', icon: 'i-lucide-edit', onSelect: () => openEditModal(user) }
                         ], [
                             { label: 'Delete', icon: 'i-lucide-trash', color: 'error', onSelect: () => promptDelete(user.id) }
@@ -241,12 +288,19 @@ const filteredUsers = computed(() => {
                     <div
                         class="*:py-2 *:first:pt-0 *:last:pb-0 *:flex *:items-center *:justify-between text-sm divide-y divide-default">
                         <div>
-                            <div class="text-muted w-full">ID</div>
-                            <UBadge :label="user.id.slice(0, 8)" variant="soft" color="neutral" class="font-mono" />
+                            <div class="text-muted">Assigned Roles</div>
+                            <div class="flex gap-1 justify-end max-w-[60%] flex-wrap">
+                                <span v-if="getRoleNames(user.id).length === 0" class="text-muted italic text-xs">No roles assigned</span>
+                                <UBadge v-else v-for="role in getRoleNames(user.id)" :key="role" :label="role" variant="subtle" color="primary" size="sm" />
+                            </div>
                         </div>
                         <div>
                             <div class="text-muted">Role</div>
                             <span class="truncate">{{ user.role }}</span>
+                        </div>
+                        <div>
+                            <div class="text-muted w-full">ID</div>
+                            <UBadge :label="user.id.slice(0, 8)" variant="soft" color="neutral" class="font-mono" />
                         </div>
                         <div>
                             <div class="text-muted w-full">Email</div>
@@ -291,4 +345,7 @@ const filteredUsers = computed(() => {
 
     <!-- Add / Edit User Modal -->
     <AddUserModal ref="modalRef" v-model:open="isOpen" :is-editing="isEditing" @save="handleSave" />
+
+    <!-- Manage Roles Modal -->
+    <ManageUserRolesModal ref="manageRolesModalRef" v-model:open="isManageRolesOpen" :user-id="manageRolesUserId" @save="handleManageRolesSave" />
 </template>

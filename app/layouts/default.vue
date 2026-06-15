@@ -11,22 +11,16 @@ const open = computed({
 })
 
 const route = useRoute()
-const { isAdmin } = useDemoAuth()
+const { role } = useDemoAuth()
 const notificationStore = useNotificationStore()
 
 const allNavItems = computed<NavigationMenuItem[]>(() => [
-    { type: 'label', label: 'Menu' },
-    { label: 'Dashboard', icon: 'i-lucide-chart-pie', to: '/', meta: { adminOnly: true } },
-    { label: 'Front Desk / Operations', icon: 'i-lucide-kanban', to: '/parking-sessions', meta: { adminOnly: true } },
-    { label: 'Billing & Transactions', icon: 'i-lucide-receipt', to: '/billing-transactions', meta: { adminOnly: true } },
-    { label: 'Vehicles', icon: 'i-lucide-car-front', to: '/vehicles', meta: { adminOnly: true } },
-    { label: 'Visitor Reservations', icon: 'i-lucide-calendar-clock', to: '/visitor-reservations', meta: { adminOnly: true } },
-    { label: 'Parking Slots', icon: 'i-lucide-circle-parking', to: '/parking-slots', meta: { adminOnly: true } },
-    { label: 'Allocations', icon: 'i-lucide-calendar-check', to: '/parking-allocations', meta: { adminOnly: true } },
-    { label: 'System Reports', icon: 'i-lucide-file-text', to: '/reports', meta: { adminOnly: true } },
-    { label: 'RFID Credentials', icon: 'i-lucide-nfc', to: '/rfid-credentials', meta: { adminOnly: true } },
+    { type: 'label', label: 'Admin' },
+    { label: 'Dashboard', icon: 'i-lucide-chart-pie', to: '/' },
+    { label: 'System Reports', icon: 'i-lucide-file-text', to: '/reports' },
+    { label: 'System Users', icon: 'i-lucide-users', to: '/users' },
+    { label: 'Roles Management', icon: 'i-lucide-shield-check', to: '/roles' },
     { label: 'Activity Logs', icon: 'i-lucide-activity', to: '/activity-logs' },
-    { label: 'System Users', icon: 'i-lucide-users', to: '/users', meta: { adminOnly: true } },
     {
         label: 'Notifications',
         icon: 'i-lucide-bell',
@@ -36,20 +30,53 @@ const allNavItems = computed<NavigationMenuItem[]>(() => [
             variant: notificationStore.unreadCount > 0 ? 'solid' : 'soft',
             color: notificationStore.unreadCount > 0 ? 'primary' : 'neutral',
             class: 'rounded-full'
-        },
-        meta: { adminOnly: true }
+        }
     },
-    // { label: 'Kanban', icon: 'i-lucide-kanban', to: '/kanban' },
-    // { label: 'Wizard', icon: 'i-lucide-wand-sparkles', to: '/wizard', meta: { adminOnly: true } },
-    // { label: 'Activity Logs', icon: 'i-lucide-activity', to: '/activity-logs' },
-    // { label: 'Settings', icon: 'i-lucide-settings', to: '/settings' },
+    { type: 'label', label: 'Parking Operations' },
+    { label: 'Parking Slots', icon: 'i-lucide-circle-parking', to: '/parking-slots' },
+    { label: 'Allocations', icon: 'i-lucide-calendar-check', to: '/parking-allocations' },
+    { label: 'Vehicles', icon: 'i-lucide-car-front', to: '/vehicles' },
+    { label: 'RFID Credentials', icon: 'i-lucide-nfc', to: '/rfid-credentials' },
+    { type: 'label', label: 'Front Desk' },
+    { label: 'Front Desk / Operations', icon: 'i-lucide-kanban', to: '/parking-sessions' },
+    { label: 'Visitor Reservations', icon: 'i-lucide-calendar-clock', to: '/visitor-reservations' },
+    { type: 'label', label: 'Finance' },
+    { label: 'Billing & Transactions', icon: 'i-lucide-receipt', to: '/billing-transactions' },
 ])
 
-const items = computed<NavigationMenuItem[][]>(() => [
-    [
-        ...allNavItems.value.filter(item => !(item as any).meta?.adminOnly || isAdmin.value)
-    ]
-])
+const isAuthorized = computed(() => {
+    // If it's a public route or docs, always authorized
+    if (route.path.startsWith('/docs')) return true
+    
+    const pages = role.value?.pages || []
+    return pages.some(p => route.path === p || route.path.startsWith(p + '/'))
+})
+
+const items = computed<NavigationMenuItem[][]>(() => {
+    const pages = role.value?.pages || []
+    const result: NavigationMenuItem[] = []
+    
+    let currentLabel: NavigationMenuItem | null = null
+    let hasItemsUnderCurrentLabel = false
+
+    for (const item of allNavItems.value) {
+        if (item.type === 'label') {
+            currentLabel = item
+            hasItemsUnderCurrentLabel = false
+        } else {
+            const isVisible = item.to && pages.includes(item.to as string)
+            if (isVisible) {
+                if (currentLabel && !hasItemsUnderCurrentLabel) {
+                    result.push(currentLabel)
+                    hasItemsUnderCurrentLabel = true
+                }
+                result.push(item)
+            }
+        }
+    }
+
+    return [result]
+})
 
 const isCollapsed = computed(() => collapsible.value === 'icon' && !open.value)
 const pageTitle = computed(() => route.meta.title as string)
@@ -111,10 +138,10 @@ const pageTitle = computed(() => route.meta.title as string)
                     'flex-1',
                     route.meta.isTable ? 'flex flex-col overflow-hidden min-h-0' : 'p-4 overflow-y-auto scrollbar'
                 ]">
-                    <slot />
+                    <AuthGate v-if="!isAuthorized" title="Access Denied" description="You do not have permission to view this page." />
+                    <slot v-else />
                 </div>
             </div>
         </div>
-        <DemoFab />
     </ClientOnly>
 </template>

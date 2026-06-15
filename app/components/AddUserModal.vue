@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
-import type { SystemRole } from '~/types/auth'
-
-const ROLE_OPTIONS: SystemRole[] = ['Admin', 'Staff']
 
 // ============================================================================
 // Props, Models & Emits
@@ -21,7 +18,6 @@ const emit = defineEmits<{
 // ============================================================================
 const schema = z.object({
     name:   z.string().min(1, 'Full name is required'),
-    role:   z.enum(['Admin', 'Staff'] as const, { message: 'Job assignment is required' }),
     email:  z.string().email('Please enter a valid email address'),
     status: z.enum(['Active', 'Inactive'], { message: 'Please select a status' }),
 })
@@ -36,7 +32,6 @@ const isSaving = ref(false)
 
 const state = reactive<Schema & { avatar: string }>({
     name:   '',
-    role:   '' as any,
     email:  '',
     status: 'Active',
     avatar: '',
@@ -47,7 +42,6 @@ const state = reactive<Schema & { avatar: string }>({
 // ============================================================================
 const reset = (initial?: Partial<typeof state>) => {
     state.name   = initial?.name   ?? ''
-    state.role   = (initial?.role   ?? '') as any
     state.email  = initial?.email  ?? ''
     state.status = initial?.status ?? 'Active'
     state.avatar = initial?.avatar ?? ''
@@ -72,9 +66,6 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             <UForm ref="formRef" :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
                 <UFormField label="Full Name" name="name" required>
                     <UInput v-model="state.name" placeholder="John Doe" class="w-full" />
-                </UFormField>
-                <UFormField label="Job Assignment" name="role" required>
-                    <USelect v-model="state.role" :items="ROLE_OPTIONS" placeholder="Select Role" class="w-full" />
                 </UFormField>
                 <UFormField label="Electronic Mail" name="email" required>
                     <UInput v-model="state.email" type="email" placeholder="john.doe@enterprise.io" class="w-full" />

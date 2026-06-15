@@ -1,38 +1,25 @@
 <script setup lang="ts">
-import type { SystemRole } from '~/types/auth'
+import { useRoleStore } from '~/stores/roleStore'
 
 definePageMeta({
     layout: false
 })
 
+const store = useRoleStore()
 const { setRole } = useDemoAuth()
 const router = useRouter()
 
-const selectedRole = ref<SystemRole | undefined>(undefined)
-
-const roleOptions: { label: string; value: SystemRole; description: string; icon: string }[] = [
-    {
-        label: 'Admin',
-        value: 'Admin',
-        description: 'Full access to all pages and features',
-        icon: 'i-lucide-shield-check'
-    },
-    {
-        label: 'Staff',
-        value: 'Staff',
-        description: 'Manage daily operations and users',
-        icon: 'i-lucide-users'
-    }
-]
+const selectedRoleId = ref<string | undefined>(undefined)
 
 const handleLogin = () => {
-    if (!selectedRole.value) return
-    setRole(selectedRole.value)
+    if (!selectedRoleId.value) return
+    setRole(selectedRoleId.value)
 
-    if (selectedRole.value === 'Admin') {
-        router.push('/')
+    const role = store.roles.find(r => r.id === selectedRoleId.value)
+    if (role && role.pages && role.pages.length > 0) {
+        router.push(role.pages[0] as string)
     } else {
-        router.push('/activity-logs')
+        router.push('/')
     }
 }
 </script>
@@ -58,27 +45,29 @@ const handleLogin = () => {
                     <UInput placeholder="Enter your password" variant="soft" size="lg" type="password" class="w-full" />
                 </UFormField>
                 <UFormField label="Role">
-                    <USelect v-model="selectedRole" placeholder="Select your role"
-                        :items="roleOptions.map(r => ({ label: r.label, value: r.value }))" variant="soft" size="lg"
+                    <USelect v-model="selectedRoleId" placeholder="Select your role"
+                        :items="store.roles.map(r => ({ label: r.name, value: r.id }))" variant="soft" size="lg"
                         class="w-full" />
                 </UFormField>
 
                 <!-- Role preview card -->
                 <Transition name="fade" mode="out-in">
-                    <div v-if="selectedRole"
+                    <div v-if="selectedRoleId"
                         class="flex items-center gap-3 p-3 rounded-lg bg-primary-50 dark:bg-primary-950/30 border border-primary-200 dark:border-primary-800">
-                        <UIcon :name="roleOptions.find(r => r.value === selectedRole)?.icon || 'i-lucide-user'"
+                        <UIcon
+                            :name="store.roles.find(r => r.id === selectedRoleId)?.name === 'Admin' ? 'i-lucide-shield-check' : 'i-lucide-user'"
                             class="size-5 text-primary shrink-0" />
                         <div>
-                            <div class="text-sm font-semibold text-primary">{{ selectedRole }}</div>
+                            <div class="text-sm font-semibold text-primary">{{store.roles.find(r => r.id ===
+                                selectedRoleId)?.name }}</div>
                             <div class="text-xs text-muted">
-                                {{roleOptions.find(r => r.value === selectedRole)?.description}}
+                                {{store.roles.find(r => r.id === selectedRoleId)?.description}}
                             </div>
                         </div>
                     </div>
                 </Transition>
 
-                <UButton label="Sign In" size="lg" class="justify-center" block :disabled="!selectedRole"
+                <UButton label="Sign In" size="lg" class="justify-center" block :disabled="!selectedRoleId"
                     @click="handleLogin" />
             </main>
 
