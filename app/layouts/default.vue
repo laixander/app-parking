@@ -47,35 +47,45 @@ const allNavItems = computed<NavigationMenuItem[]>(() => [
 const isAuthorized = computed(() => {
     // If it's a public route or docs, always authorized
     if (route.path.startsWith('/docs')) return true
-    
+
     const pages = role.value?.pages || []
     return pages.some(p => route.path === p || route.path.startsWith(p + '/'))
 })
 
 const items = computed<NavigationMenuItem[][]>(() => {
     const pages = role.value?.pages || []
-    const result: NavigationMenuItem[] = []
-    
+    const groups: NavigationMenuItem[][] = []
+    let currentGroup: NavigationMenuItem[] = []
     let currentLabel: NavigationMenuItem | null = null
     let hasItemsUnderCurrentLabel = false
 
     for (const item of allNavItems.value) {
         if (item.type === 'label') {
+            // Save previous group before starting a new one
+            if (currentGroup.length > 0) {
+                groups.push(currentGroup)
+            }
             currentLabel = item
+            currentGroup = []
             hasItemsUnderCurrentLabel = false
         } else {
             const isVisible = item.to && pages.includes(item.to as string)
             if (isVisible) {
                 if (currentLabel && !hasItemsUnderCurrentLabel) {
-                    result.push(currentLabel)
+                    currentGroup.push(currentLabel)
                     hasItemsUnderCurrentLabel = true
                 }
-                result.push(item)
+                currentGroup.push(item)
             }
         }
     }
 
-    return [result]
+    // Push the last group
+    if (currentGroup.length > 0) {
+        groups.push(currentGroup)
+    }
+
+    return groups
 })
 
 const isCollapsed = computed(() => collapsible.value === 'icon' && !open.value)
@@ -138,7 +148,8 @@ const pageTitle = computed(() => route.meta.title as string)
                     'flex-1',
                     route.meta.isTable ? 'flex flex-col overflow-hidden min-h-0' : 'p-4 overflow-y-auto scrollbar'
                 ]">
-                    <AuthGate v-if="!isAuthorized" title="Access Denied" description="You do not have permission to view this page." />
+                    <AuthGate v-if="!isAuthorized" title="Access Denied"
+                        description="You do not have permission to view this page." />
                     <slot v-else />
                 </div>
             </div>

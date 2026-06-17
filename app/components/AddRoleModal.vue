@@ -47,6 +47,7 @@ const availablePages = [
     { value: '/parking-sessions', label: 'Parking Sessions' },
     { value: '/visitor-reservations', label: 'Visitor Reservations' },
     { value: '/billing-transactions', label: 'Billing & Transactions' },
+    { value: '/settings', label: 'Settings' }
 ]
 </script>
 

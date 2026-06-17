@@ -35,6 +35,14 @@ export const useAuthStore = defineStore('authStore', {
         isFrontDesk(): boolean {
             return this.role?.name === 'Front Desk'
         },
+        /** Returns true if the logged-in user is Parking Operations. */
+        isParkingOperations(): boolean {
+            return this.role?.name === 'Parking Operations'
+        },
+        /** Returns true if the logged-in user is Finance. */
+        isFinance(): boolean {
+            return this.role?.name === 'Finance'
+        },
     },
 
     actions: {
@@ -43,7 +51,11 @@ export const useAuthStore = defineStore('authStore', {
             const roleStore = useRoleStore()
             const role = roleStore.roles.find(r => r.id === roleId)
             if (role) {
-                const name = role.name === 'Admin' ? 'Alex Rivera' : role.name === 'Front Desk' ? 'Sam Torres' : `${role.name} User`
+                const name = role.name === 'Admin' ? 'Alex Rivera' 
+                    : role.name === 'Front Desk' ? 'Sam Torres' 
+                    : role.name === 'Parking Operations' ? 'Jordan Davis'
+                    : role.name === 'Finance' ? 'Taylor Smith'
+                    : `${role.name} User`
                 this.currentUser = { name, roleId: role.id }
             }
         },

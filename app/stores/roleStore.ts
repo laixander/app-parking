@@ -4,10 +4,10 @@ import type { Role } from '~/types/role'
 export const useRoleStore = defineStore('roleStore', {
     state: () => ({
         roles: [
-            { id: 'role-admin', name: 'Admin', description: 'Administrator with full access to all pages', pages: ['/', '/reports', '/users', '/roles', '/activity-logs', '/notifications', '/parking-slots', '/parking-allocations', '/vehicles', '/rfid-credentials', '/parking-sessions', '/visitor-reservations', '/billing-transactions'] },
-            { id: 'role-ops', name: 'Parking Operations', description: 'Slot and allocation management', pages: ['/', '/parking-slots', '/parking-allocations', '/vehicles', '/rfid-credentials'] },
-            { id: 'role-frontdesk', name: 'Front Desk', description: 'Session and visitor management', pages: ['/', '/parking-sessions', '/visitor-reservations'] },
-            { id: 'role-finance', name: 'Finance', description: 'Billing and transaction processing', pages: ['/', '/billing-transactions'] },
+            { id: 'role-admin', name: 'Admin', description: 'Administrator with full access to all pages', pages: ['/', '/reports', '/users', '/roles', '/activity-logs', '/notifications', '/parking-slots', '/parking-allocations', '/vehicles', '/rfid-credentials', '/parking-sessions', '/visitor-reservations', '/billing-transactions', '/settings'] },
+            { id: 'role-ops', name: 'Parking Operations', description: 'Slot and allocation management', pages: ['/', '/parking-slots', '/parking-allocations', '/vehicles', '/rfid-credentials', '/settings'] },
+            { id: 'role-frontdesk', name: 'Front Desk', description: 'Session and visitor management', pages: ['/', '/parking-sessions', '/visitor-reservations', '/settings'] },
+            { id: 'role-finance', name: 'Finance', description: 'Billing and transaction processing', pages: ['/', '/billing-transactions', '/settings'] },
         ] as Role[],
         isLoading: false,
     }),
